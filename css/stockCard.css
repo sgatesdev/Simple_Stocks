@@ -1,0 +1,71 @@
+/* CSS for stock cards - used by stockCard.js */
+
+.card-container {
+  width: 200px;
+  margin: 10px;
+
+  border-radius: 15px;
+}
+
+.stock-symbol {
+  position: relative;
+
+  text-align: center;
+  background-color: #562692;
+  padding: 2px;
+  color: white;
+}
+
+.stock-symbol svg {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.stock-data {
+  margin: 0px;
+  padding: 5px;
+  text-align: center;
+  background-color: #6153cc;
+  border: none;
+}
+
+.stock-data p {
+  margin: 4px;
+  color: white;
+}
+
+.stock-data h4 {
+  margin: 4px;
+}
+
+.stock-data p {
+  font-size: 16pt;
+}
+
+.stock-value {
+  position: relative;
+
+  background-color: #6153cc;
+  text-align: center;
+  padding: 10px;
+  color: white;
+}
+
+.stock-value svg {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+}
+
+.stock-value h3 {
+  margin: auto;
+}
+
+#toggleData {
+  cursor: pointer;
+}
+
+#deleteCard {
+  cursor: pointer;
+}

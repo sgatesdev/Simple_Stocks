@@ -1,0 +1,79 @@
+/* CSS for index.html including addStock form and media query for responsiveness */
+
+body {
+  margin: 0px;
+  background-color: rgb(249, 249, 250);
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.header {
+  text-align: center;
+  padding: 5px;
+  background: #2d4a1a;
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(81, 29, 253, 1) 100%
+  );
+  border-radius: 15px;
+  margin: 10px;
+}
+
+.header h3 {
+  font-size: 22pt;
+  color: white;
+}
+
+.header h5 {
+  font-size: 12pt;
+  color: white;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.addStock {
+  text-align: center;
+}
+
+label {
+  font-size: 13pt;
+}
+
+.warning {
+  text-align: center;
+}
+
+input {
+  padding: 2px;
+  margin: 2px;
+}
+
+/* Adjusting form for small screens */
+@media only screen and (max-device-width: 480px) {
+  .addStock {
+    display: flex;
+    justify-content: center;
+  }
+
+  #newStockSymbol {
+    display: block;
+  }
+
+  #newStockShares {
+    display: block;
+  }
+
+  #newStockPrice {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .header h3 {
+    font-size: 12pt;
+  }
+}
