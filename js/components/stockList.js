@@ -3,21 +3,14 @@
  */
 
 // components
-import StockCard from './components/stockCard.js';
-import AddStockForm from './components/addStockForm.js';
+import StockCard from './stockCard.js';
 
 // utils
-import StoredCards from "./utils/storedCards.js";
-import { displayWarning } from "./utils/warningMsg.js";
+import StoredCards from "../utils/storedCards.js";
+import { displayWarning } from "../utils/warningMsg.js";
 
 // define web components on DOM
 window.customElements.define('stock-card', StockCard);
-window.customElements.define('add-stock-form', AddStockForm);
-
-// insert form onto page 
-const formLocation = document.querySelector('.addStock');
-const newForm = document.createElement('add-stock-form');
-formLocation.append(newForm);
 
 // pull saved symbols from local storage
 const store = new StoredCards();
