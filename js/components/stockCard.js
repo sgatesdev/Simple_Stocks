@@ -65,7 +65,7 @@ export default class StockCard extends HTMLElement {
     }
 
     formatPrice(number) {
-        const formattedNum = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 2}).format(number);
+        const formattedNum = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(number);
 
         return formattedNum;
     }
@@ -80,7 +80,7 @@ export default class StockCard extends HTMLElement {
     // setAttribute to work properly without returning null values  
     async attributeChangedCallback(name, oldValue, newValue) {
         // if values haven't changed, do nothing
-        if(oldValue === newValue) {
+        if (oldValue === newValue) {
             return;
         }
 
@@ -88,10 +88,10 @@ export default class StockCard extends HTMLElement {
         this[name] = newValue;
         this.shadowRoot.querySelector(`#stock-${name}-text`).innerText = newValue;
 
-        if(!this.price) {
+        if (!this.price) {
             this.price = await this.getPrice();
         }
-        
+
         // display price
         this.shadowRoot.querySelector(`#stock-price-text`).innerText = `$${this.price}`;
 
@@ -103,16 +103,14 @@ export default class StockCard extends HTMLElement {
     connectedCallback() {
         //this.refreshPrice = setInterval(this.getPrice, 30000);
 
-        this.shadowRoot.querySelector('#toggleData').addEventListener('click', () => this.toggleDataDisplay());
-
-        this.shadowRoot.querySelector('#deleteCard').addEventListener('click', () => this.deleteCard());
+        this.shadowRoot.querySelector('#toggleData').addEventListener('click', this.toggleDataDisplay);
+        this.shadowRoot.querySelector('#deleteCard').addEventListener('click', this.deleteCard);
     }
 
     // remove event listener
     disconnectedCallback() {
-        this.shadowRoot.querySelector('#toggleData').removeEventListener(this.toggleDataDisplay);
-
-        this.shadowRoot.querySelector('#deleteCard').removeEventListener(this.deleteCard);
+        this.shadowRoot.querySelector('#toggleData').removeEventListener('click', this.toggleDataDisplay);
+        this.shadowRoot.querySelector('#deleteCard').removeEventListener('click', this.deleteCard);
     }
 
     // toggle display
@@ -121,7 +119,7 @@ export default class StockCard extends HTMLElement {
 
         let stockData = this.shadowRoot.querySelector('.stock-data');
 
-        if(this.displayData) {
+        if (this.displayData) {
             stockData.style.display = 'block';
         }
         else {
@@ -144,7 +142,7 @@ export default class StockCard extends HTMLElement {
 
         // display warning after last card deleted
         // warning defined in stockList.js
-        if(store.numCards() === 0) {
+        if (store.numCards() === 0) {
             displayWarning();
         }
     }
