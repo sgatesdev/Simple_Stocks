@@ -5,7 +5,7 @@
 const warning = document.querySelector('.warning');
 
 export function displayWarning() {
-    warning.innerHTML = `<h3>No stocks found. Please add a stock to your collection!</h3>`;
+    warning.innerHTML = `<h3>No stocks found. Please <a href="/add" data-navigo>add</a> a stock to your collection!</h3>`;
 }
 
 export function clearWarning() {

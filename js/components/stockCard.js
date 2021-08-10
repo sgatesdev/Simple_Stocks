@@ -103,14 +103,14 @@ export default class StockCard extends HTMLElement {
     connectedCallback() {
         //this.refreshPrice = setInterval(this.getPrice, 30000);
 
-        this.shadowRoot.querySelector('#toggleData').addEventListener('click', this.toggleDataDisplay);
-        this.shadowRoot.querySelector('#deleteCard').addEventListener('click', this.deleteCard);
+        this.shadowRoot.querySelector('#toggleData').addEventListener('click', this.toggleDataDisplay.bind(this));
+        this.shadowRoot.querySelector('#deleteCard').addEventListener('click', this.deleteCard.bind(this));
     }
 
     // remove event listener
     disconnectedCallback() {
-        this.shadowRoot.querySelector('#toggleData').removeEventListener('click', this.toggleDataDisplay);
-        this.shadowRoot.querySelector('#deleteCard').removeEventListener('click', this.deleteCard);
+        this.shadowRoot.querySelector('#toggleData').removeEventListener('click', this.toggleDataDisplay.bind(this));
+        this.shadowRoot.querySelector('#deleteCard').removeEventListener('click', this.deleteCard.bind(this));
     }
 
     // toggle display
@@ -130,6 +130,8 @@ export default class StockCard extends HTMLElement {
     deleteCard() {
         // stop price refresh
         //clearInterval(this.refreshPrice);
+
+        console.log(this)
 
         // delete card from dom
         let card = this.shadowRoot.querySelector('.card-container');

@@ -3,7 +3,7 @@
  */
 
 // components
-import StockCard from './stockCard.js';
+import StockCard from '../components/stockCard.js';
 
 // utils
 import StoredCards from "../utils/storedCards.js";
@@ -17,7 +17,7 @@ const store = new StoredCards();
 const stocks = store.getCardsArray();
 
 // set where i want all of the cards to go
-const docRoot = document.querySelector('.content');
+const Home = document.createElement('div');
 
 // display saved stocks or message to add a stock
 if(stocks.length === 0) {
@@ -32,6 +32,8 @@ else {
         newCard.setAttribute('shares', stock.shares);
         newCard.setAttribute('price', stock.price);
         
-        docRoot.append(newCard);
+        Home.append(newCard);
     });
 }
+
+export default Home;
