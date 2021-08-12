@@ -27,7 +27,7 @@ template.innerHTML = `
     </form>
 `;
 
-export default class AddStockForm extends HTMLElement {
+export default class StockForm extends HTMLElement {
     constructor() {
         super();
 
@@ -71,8 +71,9 @@ export default class AddStockForm extends HTMLElement {
         const store = new StoredCards();
         store.addCard(symbol.value,shares.value);
 
-        // clear out form
-        symbol.value = '';
-        shares.value = '';
+        // re-direct user to homepage
+        window.location.replace('/');
     }
 }
+
+window.customElements.define('stock-form', StockForm);

@@ -1,9 +1,9 @@
 /**
- * stockList displays saved stocks using custom web component StockCard
+ * Displays saved stocks using custom web component StockCard
  */
 
 // components
-import StockCard from '../components/stockCard.js';
+import StockCard from './StockCard.js';
 
 // utils
 import StoredCards from "../utils/storedCards.js";
@@ -17,7 +17,8 @@ const store = new StoredCards();
 const stocks = store.getCardsArray();
 
 // set where i want all of the cards to go
-const Home = document.createElement('div');
+let stockList = document.createElement('div');
+stockList.setAttribute('style','display: flex; flex-wrap: wrap');
 
 // display saved stocks or message to add a stock
 if(stocks.length === 0) {
@@ -32,8 +33,11 @@ else {
         newCard.setAttribute('shares', stock.shares);
         newCard.setAttribute('price', stock.price);
         
-        Home.append(newCard);
+        stockList.append(newCard);
     });
 }
 
-export default Home;
+const docRoot = document.querySelector('.content');
+
+docRoot.replaceChildren(stockList);
+
