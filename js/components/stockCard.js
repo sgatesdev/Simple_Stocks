@@ -162,3 +162,5 @@ export default class StockCard extends HTMLElement {
         return priceData.c;
     }
 }
+
+window.customElements.define('stock-card', StockCard);
