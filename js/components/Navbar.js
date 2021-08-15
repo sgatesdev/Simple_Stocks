@@ -33,10 +33,10 @@ export default class Navbar extends HTMLElement {
         <div class="navbar">
         <ul>
             <li>
-                <a href="/">Home</a> |
+                <a href="#" id="nav-home">Home</a> |
             </li>
             <li>
-                <a href="/add.html">Add Stock</a> |
+                <a href="#" id="nav-add">Add Stock</a> |
             </li>
             <li>
                 <a href="/">Sign up</a> |
@@ -53,9 +53,19 @@ export default class Navbar extends HTMLElement {
     }
 
     connectedCallback() {
+        this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
 
+        this.shadowRoot.querySelector('#nav-add').addEventListener('click', () => this._navigate('add'));
     }
 
+    _navigate(page) {
+        // figure out how to do this
+        this.testEvent = new CustomEvent("route-change", {
+            bubbles: true,
+            detail: { route: page }
+        });
+        this.dispatchEvent(this.testEvent);
+    }
 
 }
 

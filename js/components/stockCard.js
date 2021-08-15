@@ -3,7 +3,6 @@
  */
 
 import StoredCards from "../utils/storedCards.js";
-import { displayWarning } from "../utils/warningMsg.js";
 
 const template = document.createElement('template');
 
