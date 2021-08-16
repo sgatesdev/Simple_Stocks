@@ -57,17 +57,17 @@ export default class AddStock extends HTMLElement {
         const store = new StoredCards();
         store.addCard(symbol.value,shares.value);
 
-        // make sure warning is clear
+        // take user back to main page
         this._navigate();
     }
 
     _navigate() {
         // figure out how to do this
-        this.testEvent = new CustomEvent("route-change", {
+        let navigateEvent = new CustomEvent("route-change", {
             bubbles: true,
             detail: { route: 'home' }
         });
-        this.dispatchEvent(this.testEvent);
+        this.dispatchEvent(navigateEvent);
     }
 }
 

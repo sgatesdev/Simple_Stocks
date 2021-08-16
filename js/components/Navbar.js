@@ -19,13 +19,14 @@ export default class Navbar extends HTMLElement {
                 margin: 0px 5px;
             }
 
-            a {
+            span[id*=nav] {
                 text-decoration: none;
                 color: white;
                 font-weight: bold;
+                cursor: pointer;
             }
 
-            a:hover {
+            span[id*=nav]:hover {
                 color: black;
             }
         </style>
@@ -33,16 +34,16 @@ export default class Navbar extends HTMLElement {
         <div class="navbar">
         <ul>
             <li>
-                <a href="#" id="nav-home">Home</a> |
+                <span id="nav-home">Home</span> |
             </li>
             <li>
-                <a href="#" id="nav-add">Add Stock</a> |
+                <span id="nav-add">Add Stock</span> |
             </li>
             <li>
-                <a href="/">Sign up</a> |
+                <span id="nav-signup">Sign up</span> |
             </li>
             <li>
-                <a href="/">Log in</a> |
+                <span id="nav-login">Log in</span> |
             </li>
             <li>
             <a href="/">Log out</a>
@@ -60,11 +61,11 @@ export default class Navbar extends HTMLElement {
 
     _navigate(page) {
         // figure out how to do this
-        this.testEvent = new CustomEvent("route-change", {
+        let navigateEvent = new CustomEvent("route-change", {
             bubbles: true,
             detail: { route: page }
         });
-        this.dispatchEvent(this.testEvent);
+        this.dispatchEvent(navigateEvent);
     }
 
 }

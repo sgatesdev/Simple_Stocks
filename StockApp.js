@@ -52,15 +52,24 @@ export default class StockApp extends HTMLElement {
             console.log(`Routing to ${e.detail.route}`)
             this._changeRoute(e.detail.route);
         });
+
+        // listen for the user to click browser buttons, use history to navigate them around
+        window.addEventListener('popstate', (event) => {
+            // Log the state data to the console
+            console.log(event.state);
+            this._changeRoute(event.state.page);
+        });
     }
 
     _changeRoute(page) {
         switch(page) {
             case 'add':
                 this.appRoot.innerHTML = `<stock-pages-add></stock-pages-add>`;
+                history.pushState({page: 'add'}, '', '/add');
                 break;
             default: 
                 this.appRoot.innerHTML = `<stock-pages-home></stock-pages-home>`;
+                history.pushState({page: 'home'}, '', '/');
                 break;
         }
     }
