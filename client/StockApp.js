@@ -11,6 +11,8 @@ export default class StockApp extends HTMLElement {
     constructor() {
         super();
 
+        this.loggedIn = true;
+
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="./css/styles.css">
@@ -48,21 +50,31 @@ export default class StockApp extends HTMLElement {
     _initializeRouter() {
         console.log('Router initiated...')
         // listen for button click, redirect user
+
         this.shadowRoot.addEventListener('route-change', (e) => {
             console.log(`Routing to ${e.detail.route}`)
-            this._changeRoute(e.detail.route);
+            // check auth status
+            this._changeRoute(this.loggedIn ? e.detail.route : 'login');
         });
 
         // listen for the user to click browser buttons, use history to navigate them around
-        window.addEventListener('popstate', (event) => {
+        window.addEventListener('popstate', (e) => {
             // Log the state data to the console
-            console.log(event.state);
-            this._changeRoute(event.state.page);
+            console.log(e.state);
+            this._changeRoute(e.state.page);
         });
     }
 
     _changeRoute(page) {
         switch(page) {
+            case 'login':
+                this.appRoot.innerHTML = `<stock-pages-login></stock-pages-login>`;
+                history.pushState({page: 'login'}, '', '/login');
+                break;               
+            case 'signup':
+                this.appRoot.innerHTML = `<stock-pages-signup></stock-pages-signup>`;
+                history.pushState({page: 'signup'}, '', '/signup');
+                break;
             case 'add':
                 this.appRoot.innerHTML = `<stock-pages-add></stock-pages-add>`;
                 history.pushState({page: 'add'}, '', '/add');
@@ -78,4 +90,3 @@ export default class StockApp extends HTMLElement {
         this.appRoot.innerHTML = `<stock-pages-home></stock-pages-home>`;
     }
 }
-

@@ -32,31 +32,38 @@ export default class Navbar extends HTMLElement {
         </style>
 
         <div class="navbar">
-        <ul>
-            <li>
-                <span id="nav-home">Home</span> |
-            </li>
-            <li>
-                <span id="nav-add">Add Stock</span> |
-            </li>
-            <li>
-                <span id="nav-signup">Sign up</span> |
-            </li>
-            <li>
-                <span id="nav-login">Log in</span> |
-            </li>
-            <li>
-            <a href="/">Log out</a>
-        </li>
-        </ul>
         </div>    
         `;
     }
 
     connectedCallback() {
+        this._render();
+
         this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
 
         this.shadowRoot.querySelector('#nav-add').addEventListener('click', () => this._navigate('add'));
+    }
+
+    _render() {
+        const navList = this.shadowRoot.querySelector('.navbar');
+
+        // AUTH LOGIC
+        navList.innerHTML = `
+        <ul>
+        <li>
+            <span id="nav-home">Home</span> |
+        </li>
+        <li>
+            <span id="nav-add">Add Stock</span> |
+        </li>
+        <li>
+            <span id="nav-profile">Profile</span> |
+        </li>
+        <li>
+            <span id="nav-logout">Log out</span>
+        </li>
+        </ul>
+        `;
     }
 
     _navigate(page) {
