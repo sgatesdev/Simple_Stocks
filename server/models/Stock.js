@@ -4,6 +4,7 @@ const StockSchema = new Schema({
     symbol: {
         type: String,
         required: false,
+        unique: true
     },
     user: {
         type: Schema.Types.ObjectId,

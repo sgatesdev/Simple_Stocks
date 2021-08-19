@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const secret = process.env.TOKEN_SECRET;
+const expires = process.env.TOKEN_EXPIRES;
 
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -22,7 +23,7 @@ router.post('/login', async (req, res) => {
 const signToken = (username, email, _id) => {
     const payload = { username, email, _id };
 
-    return jwt.sign({ data: payload }, secret, { expiresIn: '1h' })
+    return jwt.sign({ data: payload }, secret, { expiresIn: expires })
 }
 
 module.exports = router;

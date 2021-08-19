@@ -13,8 +13,11 @@
 const router = require('express').Router();
 const Stock = require('../models/Stock');
 
-// GET /all/userID
-router.get('/all/:user', async (req, res) => {
+// bring in auth middleware
+const verifyToken = require('../utils/auth.js');
+
+// GET ALL STOCK DOCUMENTS FOR ONE USER
+router.get('/all/:user', verifyToken, async (req, res) => {
     let stocks = await Stock.find({ user: req.params.user });
 
     if(!stocks) {
@@ -24,41 +27,40 @@ router.get('/all/:user', async (req, res) => {
     return res.json(stocks);
 });
 
-// GET /one/stockID
-router.get('/one/:stock', async (req, res) => {
-    let stock = await Stock.find({ _id: req.params.stock });
-
-    if(!stock) {
+// GET STOCK DOCUMENT IN DATABASE
+router.get('/one/:stock', verifyToken, async (req, res) => {
+    console.log(req.params.stock)
+    
+    try {
+        let stock = await Stock.findOne({ '_id': req.params.stock });
+        return res.json(stock);
+    }
+    catch(err) {
+        console.log(err);
         return res.json({ message: 'No stock found with that ID...' });
     }
-
-    return res.json(stock);
 });
 
-// POST /new/symbol
-router.post('/new/:symbol', async (req, res) => {
+// POST NEW STOCK DOCUMENT FOR USER
+router.post('/new', verifyToken, async (req, res) => {
     // check to see if that symbol already used by that specific user
-    let checkSymbol = Stock.find({ symbol: req.body.symbol, user: req.body.user });
+    let checkSymbol = await Stock.findOne({ symbol: req.body.symbol, user: req.body.user });
 
-    if(checkSymbol) {
+    if(checkSymbol != null) {
         return res.json({ message: 'Symbol already exists for that user!' });
     }
 
-    let strippedReq = {};
-
-    // remove token (future)
-    for (const property in object) {
-        if(property !== 'token') {
-            strippedReq[property] = object[property];
-        }
-    }
+    let strippedReq = {
+        symbol: req.body.symbol, 
+        user: req.body.user
+    };
 
     let stock = new Stock(strippedReq);
 
-    stock.save((err, res) => {
+    stock.save((err, newStock) => {
         if(err) return res.json(err);
 
-        return res.json(res);
+        return res.json(newStock);
     });
 }); 
 
