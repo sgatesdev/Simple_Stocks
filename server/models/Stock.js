@@ -6,6 +6,10 @@ const StockSchema = new Schema({
         required: false,
         unique: true
     },
+    shares: {
+        type: Number,
+        require: true
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',

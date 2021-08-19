@@ -9,12 +9,12 @@ const expires = process.env.TOKEN_EXPIRES;
 const secret = process.env.TOKEN_SECRET;
 
 const verifyToken = async (req, res, next) => {
-    if(!req.body.token) {
+    let token = req.body.token || req.headers.authorization;
+    token = token.split(' ').pop().trim();
+
+    if(!token) {
         return res.json({ message: 'MUST BE AUTHENTICATED!' });
     }
-
-    let token = req.body.token;
-    token = token.split(' ').pop().trim();
 
     try {
         jwt.verify(token, secret, { maxAge: expires });
