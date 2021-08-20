@@ -1,23 +1,4 @@
-/**
- * fetch(url, {
-        method: 'GET',
-        withCredentials: true,
-        credentials: 'include',
-        headers: {
-            'Authorization': bearer,
-            'X-FP-API-KEY': 'iphone', //it can be iPhone or your any other attribute
-            'Content-Type': 'application/json'
-        }
-    }).then(responseJson => {
-        var items = JSON.parse(responseJson._bodyInit);
-    })
-    .catch(error => this.setState({
-        isLoading: false,
-        message: 'Something bad happened ' + error
-    }));
- */
-
-    /**
+ /**
  * Page to handle adding a stock
  */
 
@@ -108,17 +89,14 @@ export default class Login extends HTMLElement {
 
         // set the token in place
 
-        // dispatch event to change nav menu? 
-
         // take user back to main page
         this._navigate();
     }
 
     _navigate() {
-        // figure out how to do this
         let navigateEvent = new CustomEvent("route-change", {
             bubbles: true,
-            detail: { route: 'home' }
+            detail: { route: 'home', loggedIn: true }
         });
         this.dispatchEvent(navigateEvent);
     }

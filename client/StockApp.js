@@ -14,36 +14,19 @@ export default class StockApp extends HTMLElement {
     constructor() {
         super();
 
-        this.loggedIn = true;
-
+        // create shadow dom, render shell for app 
         this.attachShadow({ mode: 'open' });
-        this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="./css/styles.css">
-            
-            <div class="header">
-                <h3>Simple Stocks</h3>
-                <stock-navbar>
-                </stock-navbar>
-            </div>
+        this._render();
 
-            <div class="addStock">
-            <!-- Put form here -->
-            </div>
-
-            <div class="warning">
-            <!-- No stock warning goes here -->
-            </div>
-
-            <div class="content">
-            <!-- STOCK CARDS GO HERE -->
-            </div>
-        `;
-
+        // set root for content within app 
         this.appRoot = this.shadowRoot.querySelector('.content');
+
+        // default value for loggedIn
+        this.loggedIn = false;
     }
 
     connectedCallback() {   
-        // start listening for route changes
+        // start listening for route changes on load
         this._initializeRouter();
 
         // set default route
@@ -52,18 +35,26 @@ export default class StockApp extends HTMLElement {
 
     _initializeRouter() {
         console.log('Router initiated...')
-        // listen for button click, redirect user
 
+        // listen for button click, redirect user
         this.shadowRoot.addEventListener('route-change', (e) => {
+            // if logged in, tell navbar to update menu by changing attribute
+            if(e.detail.loggedIn) {
+                console.log('logged in event listener working...')
+                this.loggedIn = true;
+
+                const navbar = this.shadowRoot.querySelector('stock-navbar');
+                navbar.setAttribute('logged', 'true');
+            }
+
             console.log(`Routing to ${e.detail.route}`)
-            // check auth status
+
+            // if logged in, allow user to go to protected routes
             this._changeRoute(this.loggedIn ? e.detail.route : 'login');
         });
 
         // listen for the user to click browser buttons, use history to navigate them around
         window.addEventListener('popstate', (e) => {
-            // Log the state data to the console
-            console.log(e.state);
             this._changeRoute(e.state.page);
         });
     }
@@ -89,7 +80,27 @@ export default class StockApp extends HTMLElement {
         }
     }
 
-    _changePage() {
-        this.appRoot.innerHTML = `<stock-pages-home></stock-pages-home>`;
+    _render() {
+        this.shadowRoot.innerHTML = `
+        <link rel="stylesheet" href="./css/styles.css">
+        
+        <div class="header">
+            <h3>Simple Stocks</h3>
+            <stock-navbar logged="false">
+            </stock-navbar>
+        </div>
+
+        <div class="addStock">
+        <!-- Put form here -->
+        </div>
+
+        <div class="warning">
+        <!-- No stock warning goes here -->
+        </div>
+
+        <div class="content">
+        <!-- STOCK CARDS GO HERE -->
+        </div>
+    `;
     }
 }

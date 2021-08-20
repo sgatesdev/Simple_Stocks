@@ -134,11 +134,6 @@ export default class StockCard extends HTMLElement {
 
         // warning defined in stockList.js
         if (store.numCards() - 1 === 0) {
-            /**
-             * 
-             * DISPATCH EVENT TO HANDLE NO CARDS 
-             * 
-             */
              store.deleteCard(this.symbol);
              return this._displayWarning();
         }
