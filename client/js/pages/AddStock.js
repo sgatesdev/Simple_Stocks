@@ -62,7 +62,6 @@ export default class AddStock extends HTMLElement {
     }
 
     _navigate() {
-        // figure out how to do this
         let navigateEvent = new CustomEvent("route-change", {
             bubbles: true,
             detail: { route: 'home' }

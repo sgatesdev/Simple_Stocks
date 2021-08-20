@@ -42,6 +42,8 @@ export default class Navbar extends HTMLElement {
         this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
 
         this.shadowRoot.querySelector('#nav-add').addEventListener('click', () => this._navigate('add'));
+
+        this.shadowRoot.querySelector('#nav-login').addEventListener('click', () => this._navigate('login'));
     }
 
     _render() {
@@ -52,6 +54,9 @@ export default class Navbar extends HTMLElement {
         <ul>
         <li>
             <span id="nav-home">Home</span> |
+        </li>
+        <li>
+            <span id="nav-login">Login</span> |
         </li>
         <li>
             <span id="nav-add">Add Stock</span> |

@@ -127,30 +127,28 @@ export default class StockCard extends HTMLElement {
     }
 
     deleteCard() {
-        // stop price refresh
-        //clearInterval(this.refreshPrice);
-
-        console.log(this)
-
-        // delete card from dom
-        let card = this.shadowRoot.querySelector('.card-container');
-
-        card.remove();
-
         // delete card from local storage
         const store = new StoredCards();
-        store.deleteCard(this.symbol);
 
-        // display warning after last card deleted
+        this.card = this.shadowRoot.querySelector('.card-container');
+
         // warning defined in stockList.js
-        if (store.numCards() === 0) {
-            displayWarning();
+        if (store.numCards() - 1 === 0) {
+            /**
+             * 
+             * DISPATCH EVENT TO HANDLE NO CARDS 
+             * 
+             */
+             store.deleteCard(this.symbol);
+             return this._displayWarning();
         }
+        
+        store.deleteCard(this.symbol);
+        this.card.remove();
     }
 
     // get price
     async getPrice() {
-        console.log('get price')
         // FinnHub API key
         const key = 'c162mdv48v6ootkka5hg';
 
@@ -159,6 +157,11 @@ export default class StockCard extends HTMLElement {
         const priceData = await data.json();
 
         return priceData.c;
+    }
+
+    _displayWarning() {
+        this.card.setAttribute('style','width: 100%');
+        this.card.innerHTML = `<h3>No stocks found. Please add a stock to your collection!</h3>`;
     }
 }
 

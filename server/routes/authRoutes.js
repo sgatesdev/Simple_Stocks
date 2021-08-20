@@ -11,13 +11,16 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     let user = await User.findOne({ username });
+
+    if(!user) return res.json({ 'error': 'Invalid user!' });
+
     let correctPass = await user.isCorrectPassword(password);
 
-    if(!correctPass) return res.json({ message: 'Error logging in!' });
+    if(!correctPass) return res.json({ 'error': 'Error logging in!' });
 
     const token = signToken(username, user.email, user._id);
 
-    return res.json(token);
+    return res.json({ token });
 });
 
 const signToken = (username, email, _id) => {

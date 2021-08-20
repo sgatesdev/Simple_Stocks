@@ -5,6 +5,9 @@
 // import pages
 import Home from './js/pages/Home.js';
 import AddStock from './js/pages/AddStock.js';
+import Login from './js/pages/Login.js';
+
+// import navbar component
 import Navbar from './js/components/Navbar.js';
 
 export default class StockApp extends HTMLElement {

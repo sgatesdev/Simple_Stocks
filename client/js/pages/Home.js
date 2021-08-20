@@ -17,6 +17,8 @@ export default class Home extends HTMLElement {
             <div style="display: flex; flex-wrap: wrap" id="homePageContent">
             </div>
         `;
+
+        this.homePageContent = this.shadowRoot.querySelector('#homePageContent');
     }
 
     connectedCallback() {
@@ -30,12 +32,14 @@ export default class Home extends HTMLElement {
         else {
             this._displayStocks();
         }
+
+        this.addEventListener('cards-warning', () => {
+            this._displayWarning();
+        });
     }
 
     _displayWarning() {
-        const warning = document.querySelector('.warning');
-
-        warning.innerHTML = `<h3>No stocks found. Please <a href="/add" data-navigo>add</a> a stock to your collection!</h3>`;
+        this.homePageContent.innerHTML = `<h3>No stocks found. Please add a stock to your collection!</h3>`;
     }
 
     _displayStocks() {
@@ -47,9 +51,7 @@ export default class Home extends HTMLElement {
             newCard.setAttribute('shares', stock.shares);
             newCard.setAttribute('price', stock.price);
 
-            const homePageContent = this.shadowRoot.querySelector('#homePageContent');
-
-            homePageContent.append(newCard);
+            this.homePageContent.append(newCard);
         });
     }
 }
