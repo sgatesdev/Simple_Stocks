@@ -2,7 +2,6 @@
  * Page to handle adding a stock
  */
 
-import StoredCards from "../utils/storedCards.js";
 
 const template = document.createElement('template');
 

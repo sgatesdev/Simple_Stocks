@@ -33,10 +33,7 @@ export default class Navbar extends HTMLElement {
 
         this.loggedIn = newValue;
 
-        // if value set to true, switch menus
-        if(this.loggedIn) {
-            this._renderLogged();
-        }
+        this.loggedIn ? this._renderLogged() : this._renderDefault();
     }
 
 
@@ -91,6 +88,8 @@ export default class Navbar extends HTMLElement {
         this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
 
         this.shadowRoot.querySelector('#nav-add').addEventListener('click', () => this._navigate('add'));
+
+        this.shadowRoot.querySelector('#nav-logout').addEventListener('click', () => this._navigate('logout'));        
     }
 
     // render container for component w/ styling

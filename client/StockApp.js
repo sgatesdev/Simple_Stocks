@@ -42,11 +42,20 @@ export default class StockApp extends HTMLElement {
             this.token = localStorage.getItem('simple-stocks-jwt');
 
             if(this.token) {
-                console.log('here')
                 this.loggedIn = true;
 
                 const navbar = this.shadowRoot.querySelector('stock-navbar');
                 navbar.setAttribute('logged', 'true');
+            }
+
+            // log user out
+            if(e.detail.route === 'logout') {
+                localStorage.removeItem('simple-stocks-jwt');
+
+                const navbar = this.shadowRoot.querySelector('stock-navbar');
+                navbar.removeAttribute('logged');
+
+                this._changeRoute('home');
             }
 
             console.log(`Routing to ${e.detail.route}`)

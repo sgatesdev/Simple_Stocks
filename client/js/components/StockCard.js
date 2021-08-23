@@ -1,9 +1,6 @@
 /**
  * StockCard web component: renders stock info and calculates value of holding
  */
-
-import StoredCards from "../utils/storedCards.js";
-
 const template = document.createElement('template');
 
 template.innerHTML = `

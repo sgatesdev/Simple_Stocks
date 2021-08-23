@@ -65,7 +65,7 @@ export default class Home extends HTMLElement {
 
     _renderDefault() {
         this.homePageContent.innerHTML = `
-        <h1>Not logged in!</h1>
+        <h1>Please log in to see your stocks</h1>
         `;
     }
 }
