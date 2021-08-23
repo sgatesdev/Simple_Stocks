@@ -15,7 +15,9 @@ export default class Navbar extends HTMLElement {
 
     // when component loads, render default menu 
     connectedCallback() {
-        this._renderInitialMenu();
+        this.token = localStorage.getItem('simple-stocks-jwt');
+
+        this.token ? this._renderLogged() : this._renderDefault();
     }
 
     // watch the logged attribute for changes
@@ -33,9 +35,10 @@ export default class Navbar extends HTMLElement {
 
         // if value set to true, switch menus
         if(this.loggedIn) {
-            this._renderLoggedMenu();
+            this._renderLogged();
         }
     }
+
 
     // dispatch event to StockApp to switch pages
     _navigate(page) {
@@ -47,7 +50,7 @@ export default class Navbar extends HTMLElement {
     }
 
     // displays default menu
-    _renderInitialMenu() {
+    _renderDefault() {
         this.navList.innerHTML = `
         <ul>
         <li>
@@ -66,7 +69,7 @@ export default class Navbar extends HTMLElement {
     }
 
     // displays logged in menu w/ event listeners for navigation
-    _renderLoggedMenu() {
+    _renderLogged() {
         this.navList.innerHTML = `
         <ul>
         <li>

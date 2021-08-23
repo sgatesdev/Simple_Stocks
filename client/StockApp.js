@@ -39,8 +39,10 @@ export default class StockApp extends HTMLElement {
         // listen for button click, redirect user
         this.shadowRoot.addEventListener('route-change', (e) => {
             // if logged in, tell navbar to update menu by changing attribute
-            if(e.detail.loggedIn) {
-                console.log('logged in event listener working...')
+            this.token = localStorage.getItem('simple-stocks-jwt');
+
+            if(this.token) {
+                console.log('here')
                 this.loggedIn = true;
 
                 const navbar = this.shadowRoot.querySelector('stock-navbar');
@@ -49,8 +51,7 @@ export default class StockApp extends HTMLElement {
 
             console.log(`Routing to ${e.detail.route}`)
 
-            // if logged in, allow user to go to protected routes
-            this._changeRoute(this.loggedIn ? e.detail.route : 'login');
+            this._changeRoute(e.detail.route);
         });
 
         // listen for the user to click browser buttons, use history to navigate them around

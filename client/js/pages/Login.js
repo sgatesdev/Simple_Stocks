@@ -88,6 +88,7 @@ export default class Login extends HTMLElement {
         }
 
         // set the token in place
+        localStorage.setItem('simple-stocks-jwt', formatRes.token);
 
         // take user back to main page
         this._navigate();

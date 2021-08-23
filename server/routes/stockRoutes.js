@@ -11,14 +11,20 @@
  */
 
 const router = require('express').Router();
+const jwt = require('jsonwebtoken');
+
 const Stock = require('../models/Stock');
 
 // bring in auth middleware
 const verifyToken = require('../utils/auth.js');
 
 // GET ALL STOCK DOCUMENTS FOR ONE USER
-router.get('/all/:user', verifyToken, async (req, res) => {
-    let stocks = await Stock.find({ user: req.params.user });
+router.get('/user', verifyToken, async (req, res) => {
+    // get user ID from token
+    let token = req.headers.authorization.split(' ').pop().trim();
+    let decoded = jwt.decode(token);
+
+    let stocks = await Stock.find({ user: decoded.data._id });
 
     if(!stocks) {
         return res.json({ message: 'No stocks found...' });
@@ -44,16 +50,20 @@ router.get('/one/:stock', verifyToken, async (req, res) => {
 // POST NEW STOCK DOCUMENT FOR USER
 router.post('/new', verifyToken, async (req, res) => {
     // check to see if that symbol already used by that specific user
-    let checkSymbol = await Stock.findOne({ symbol: req.body.symbol, user: req.body.user });
+    let checkSymbol = await Stock.findOne({ symbol: req.body.symbol });
 
     if(checkSymbol != null) {
         return res.json({ message: 'Symbol already exists for that user!' });
     }
 
+    // get user ID from token
+    let token = req.headers.authorization.split(' ').pop().trim();
+    let decoded = jwt.decode(token);
+
     // strictly define what fields go to database
     let strippedReq = {
         symbol: req.body.symbol, 
-        user: req.body.user
+        user: decoded.data._id
     };
 
     let stock = new Stock(strippedReq);
