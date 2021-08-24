@@ -101,6 +101,8 @@ export default class StockCard extends HTMLElement {
 
         this.shadowRoot.querySelector('#toggleData').addEventListener('click', this.toggleDataDisplay.bind(this));
         this.shadowRoot.querySelector('#deleteCard').addEventListener('click', this.deleteCard.bind(this));
+
+        this.token = localStorage.getItem('simple-stocks-jwt');
     }
 
     // remove event listener
@@ -123,19 +125,23 @@ export default class StockCard extends HTMLElement {
         }
     }
 
-    deleteCard() {
-        // delete card from local storage
-        const store = new StoredCards();
+    async deleteCard() {
+        // get ID from attributes
+        let stockId = this.getAttribute('data-id');
+
+        // delete card from database
+        let res = await fetch(`http://localhost:3001/stock/delete/${stockId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        let test = await res.json();
 
         this.card = this.shadowRoot.querySelector('.card-container');
 
-        // warning defined in stockList.js
-        if (store.numCards() - 1 === 0) {
-             store.deleteCard(this.symbol);
-             return this._displayWarning();
-        }
-        
-        store.deleteCard(this.symbol);
         this.card.remove();
     }
 

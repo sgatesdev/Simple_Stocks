@@ -8,6 +8,12 @@
 const router = require('express').Router();
 const User = require('../models/User');
 
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const secret = process.env.TOKEN_SECRET;
+const expires = process.env.TOKEN_EXPIRES;
+
 // bring in auth middleware
 const verifyToken = require('../utils/auth.js');
 
@@ -15,10 +21,13 @@ router.post('/new', async (req, res) => {
     let user = new User(req.body);
 
     user.save((err, newUser) => {
-        console.log(newUser)
         if(err) return res.json(err);
 
-        return res.json(newUser);
+        const payload = { username: req.body.username, email: req.body.email, _id: newUser._id }
+
+        const token = jwt.sign({ data: payload }, secret, { expiresIn: expires });
+
+        return res.json(token);
     });
 });
 

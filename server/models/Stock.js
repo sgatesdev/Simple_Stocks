@@ -8,11 +8,12 @@ const StockSchema = new Schema({
     },
     shares: {
         type: Number,
-        require: true
+        required: true
     },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        required: true
     },
     description: {
         type: String

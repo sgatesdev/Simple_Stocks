@@ -2,7 +2,6 @@
  * Home page
  */
 
-// components
 import StockCard from '../components/StockCard.js';
 
 export default class Home extends HTMLElement {
@@ -19,7 +18,6 @@ export default class Home extends HTMLElement {
 
     connectedCallback() {
         this.token = localStorage.getItem('simple-stocks-jwt');
-        console.log(this.token);
 
         this.token ? this._renderLogged() : this._renderDefault();
     }
@@ -50,6 +48,7 @@ export default class Home extends HTMLElement {
             newCard.setAttribute('symbol', stock.symbol);
             newCard.setAttribute('shares', stock.shares);
             newCard.setAttribute('price', stock.price);
+            newCard.setAttribute('data-id', stock._id)
 
             this.homePageContent.append(newCard);
         });
@@ -71,22 +70,3 @@ export default class Home extends HTMLElement {
 }
 
 window.customElements.define('stock-pages-home', Home);
-
-/**
- * fetch(url, {
-        method: 'GET',
-        withCredentials: true,
-        credentials: 'include',
-        headers: {
-            'Authorization': bearer,
-            'X-FP-API-KEY': 'iphone', //it can be iPhone or your any other attribute
-            'Content-Type': 'application/json'
-        }
-    }).then(responseJson => {
-        var items = JSON.parse(responseJson._bodyInit);
-    })
-    .catch(error => this.setState({
-        isLoading: false,
-        message: 'Something bad happened ' + error
-    }));
- */

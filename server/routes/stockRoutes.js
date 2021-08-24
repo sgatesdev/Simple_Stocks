@@ -63,6 +63,7 @@ router.post('/new', verifyToken, async (req, res) => {
     // strictly define what fields go to database
     let strippedReq = {
         symbol: req.body.symbol, 
+        shares: req.body.shares,
         user: decoded.data._id
     };
 

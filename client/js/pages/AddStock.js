@@ -2,41 +2,22 @@
  * Page to handle adding a stock
  */
 
-const template = document.createElement('template');
-
-template.innerHTML = `
-    <style>
-        button {
-            border-radius: 5px;
-            padding: 5px;
-            margin-left: 5px;
-            background-color: #513aff;
-            font-weight: bold;
-            color: white;
-        }
-    </style>
-    <form action="#" id="addStockForm">
-        <input type="text" name="stockName" placeholder="Symbol" id="newStockSymbol">
-
-        <input type="text" name="stockShares" placeholder="Shares" id="newStockShares">
-
-        <button type="submit">Add Stock</button>
-    </form>
-`;
-
 export default class AddStock extends HTMLElement {
     constructor() {
         super();
 
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
-        
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+        this._renderForm();
     }
 
     connectedCallback() {
         const form = this.shadowRoot.querySelector('#addStockForm');
         form.addEventListener('submit', (e) => this.onSubmit(e));
+
+        // grab token from local storage to authenticate request 
+        this.token = localStorage.getItem('simple-stocks-jwt');
     }
 
     disconnectedCallback() {
@@ -44,17 +25,29 @@ export default class AddStock extends HTMLElement {
         form.removeEventListener('submit', this.onSubmit);
     }
 
-    onSubmit(e) {
+    async onSubmit(e) {
         e.preventDefault();
 
         //get inputs, including values, from DOM 
-        let symbol = this.shadowRoot.getElementById('newStockSymbol');
-        let shares = this.shadowRoot.getElementById('newStockShares');
+        let symbol = this.shadowRoot.getElementById('newStockSymbol').value;
+        let shares = this.shadowRoot.getElementById('newStockShares').value;
 
-        // add card to local storage
-        const store = new StoredCards();
-        store.addCard(symbol.value,shares.value);
+        // put data into var to send 
+        let newStock = {
+            symbol,
+            shares
+        };
 
+        // save new stock selection
+        let res = await fetch('http://localhost:3001/stock/new/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newStock)
+        });
+        
         // take user back to main page
         this._navigate();
     }
@@ -65,6 +58,27 @@ export default class AddStock extends HTMLElement {
             detail: { route: 'home' }
         });
         this.dispatchEvent(navigateEvent);
+    }
+
+    _renderForm() {
+        this.shadowRoot.innerHTML =  `
+        <style>
+            button {
+                border-radius: 5px;
+                padding: 5px;
+                margin-left: 5px;
+                background-color: #513aff;
+                font-weight: bold;
+                color: white;
+            }
+        </style>
+        <form action="#" id="addStockForm">
+            <input type="text" name="stockName" placeholder="Symbol" id="newStockSymbol">
+            <input type="text" name="stockShares" placeholder="Shares" id="newStockShares">
+
+            <button type="submit">Add Stock</button>
+        </form>
+        `;
     }
 }
 

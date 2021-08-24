@@ -54,7 +54,10 @@ export default class Navbar extends HTMLElement {
             <span id="nav-home">Home</span> |
         </li>
         <li>
-            <span id="nav-login">Login</span>
+            <span id="nav-login">Login</span> |
+        </li>
+        <li>
+        <span id="nav-signup">Sign Up</span>
         </li>
         </ul>
         `;
@@ -63,6 +66,8 @@ export default class Navbar extends HTMLElement {
         this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
 
         this.shadowRoot.querySelector('#nav-login').addEventListener('click', () => this._navigate('login'));
+
+        this.shadowRoot.querySelector('#nav-signup').addEventListener('click', () => this._navigate('signup'));
     }
 
     // displays logged in menu w/ event listeners for navigation
