@@ -40,6 +40,12 @@ export default class Home extends HTMLElement {
     }
 
     _displayStocks() {
+        if(this._stockData.length === 0) {
+            this.homePageContent.innerHTML = `
+            <h1>No stocks found! Please add a stock to your portfolio.</h1>
+            `;
+        }
+
 
         // iterate through stocks to generate cards for each stock, display on page 
         this._stockData.forEach(stock => {
