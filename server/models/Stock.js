@@ -3,8 +3,7 @@ const { Schema, model } = require('mongoose');
 const StockSchema = new Schema({
     symbol: {
         type: String,
-        required: false,
-        unique: true
+        required: true
     },
     shares: {
         type: Number,

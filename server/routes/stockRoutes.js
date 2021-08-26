@@ -49,16 +49,16 @@ router.get('/one/:stock', verifyToken, async (req, res) => {
 
 // POST NEW STOCK DOCUMENT FOR USER
 router.post('/new', verifyToken, async (req, res) => {
-    // check to see if that symbol already used by that specific user
-    let checkSymbol = await Stock.findOne({ symbol: req.body.symbol });
-
-    if(checkSymbol != null) {
-        return res.json({ message: 'Symbol already exists for that user!' });
-    }
-
     // get user ID from token
     let token = req.headers.authorization.split(' ').pop().trim();
     let decoded = jwt.decode(token);
+
+    // check to see if that symbol already used by that specific user
+    let checkSymbol = await Stock.findOne({ 'symbol': req.body.symbol, 'user': decoded.data._id });
+
+    if(checkSymbol) {
+        return res.json({ message: 'Symbol already exists for that user!' });
+    }
 
     // strictly define what fields go to database
     let strippedReq = {
@@ -66,6 +66,8 @@ router.post('/new', verifyToken, async (req, res) => {
         shares: req.body.shares,
         user: decoded.data._id
     };
+
+    console.log(strippedReq)
 
     let stock = new Stock(strippedReq);
 

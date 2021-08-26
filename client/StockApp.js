@@ -7,6 +7,7 @@ import Home from './js/pages/Home.js';
 import AddStock from './js/pages/AddStock.js';
 import Login from './js/pages/Login.js';
 import Signup from './js/pages/Signup.js';
+import Profile from './js/pages/Profile.js';
 
 // import navbar component
 import Navbar from './js/components/Navbar.js';
@@ -87,6 +88,10 @@ export default class StockApp extends HTMLElement {
             case 'signup':
                 this.appRoot.innerHTML = `<stock-pages-signup></stock-pages-signup>`;
                 history.pushState({page: 'signup'}, '', '/signup');
+                break;
+            case 'profile':
+                this.appRoot.innerHTML = `<stock-pages-profile></stock-pages-profile>`;
+                history.pushState({page: 'profile'}, '', '/profile');
                 break;
             default: 
                 this.appRoot.innerHTML = `<stock-pages-home></stock-pages-home>`;

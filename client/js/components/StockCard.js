@@ -107,8 +107,9 @@ export default class StockCard extends HTMLElement {
 
     // remove event listener
     disconnectedCallback() {
-        this.shadowRoot.querySelector('#toggleData').removeEventListener('click', this.toggleDataDisplay.bind(this));
-        this.shadowRoot.querySelector('#deleteCard').removeEventListener('click', this.deleteCard.bind(this));
+        // this.shadowRoot.querySelector('#toggleData').removeEventListener('click', this.toggleDataDisplay.bind(this));
+
+        // this.shadowRoot.querySelector('#deleteCard').removeEventListener('click', this.deleteCard.bind(this));
     }
 
     // toggle display

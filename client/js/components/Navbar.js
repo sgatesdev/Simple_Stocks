@@ -94,6 +94,8 @@ export default class Navbar extends HTMLElement {
 
         this.shadowRoot.querySelector('#nav-add').addEventListener('click', () => this._navigate('add'));
 
+        this.shadowRoot.querySelector('#nav-profile').addEventListener('click', () => this._navigate('profile'));
+
         this.shadowRoot.querySelector('#nav-logout').addEventListener('click', () => this._navigate('logout'));        
     }
 

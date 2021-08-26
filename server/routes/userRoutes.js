@@ -31,7 +31,47 @@ router.post('/new', async (req, res) => {
     });
 });
 
-router.get('/:id', verifyToken, async (req, res) => {
+router.put('/edit', verifyToken, async (req, res) => {
+    // get user ID from token
+    let token = req.headers.authorization.split(' ').pop().trim();
+    let decoded = jwt.decode(token);
+    
+    let user = await User.findOne({ '_id': decoded.data._id });
+
+    user.email = req.body.email;
+    user.username = req.body.username;
+
+    let checkPass = await user.isCorrectPassword(req.body.current_password);
+
+    if(!checkPass) {
+        return res.json({ message: 'Incorrect password!' });
+    }
+
+    user.changePassword(req.body.password);
+
+    user.save((err, newUser) => {
+        if(err) return res.json(err);
+
+        return res.json(newUser);
+    });
+});
+
+router.get('/me', verifyToken, async (req, res) => {
+    // get user ID from token
+    let token = req.headers.authorization.split(' ').pop().trim();
+    let decoded = jwt.decode(token);
+
+    let user = await User.findOne({ '_id': decoded.data._id });
+
+    if(!user) {
+        return res.json({ message: 'No user with that ID found.' });
+    }
+
+     return res.json(user);
+});
+
+
+router.get('/id/:id', verifyToken, async (req, res) => {
     let user = await User.findOne({ '_id': req.params.id });
 
     if(!user) {
