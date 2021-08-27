@@ -11,7 +11,7 @@ export default class AddStock extends HTMLElement {
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
 
-        this._renderForm();
+        this._render();
     }
 
     connectedCallback() {
@@ -31,8 +31,13 @@ export default class AddStock extends HTMLElement {
         e.preventDefault();
 
         //get inputs, including values, from DOM 
-        let symbol = this.shadowRoot.getElementById('newStockSymbol').value;
+        let symbol = this.shadowRoot.getElementById('newStockSymbol').value.trim().toUpperCase();
         let shares = this.shadowRoot.getElementById('newStockShares').value;
+
+        // basic error checking
+        if(symbol === '' || shares === '' || isNaN(shares)) {
+            return this._displayError('Please enter all required information.');
+        }
 
         // put data into var to send 
         let newStock = {
@@ -50,8 +55,15 @@ export default class AddStock extends HTMLElement {
             body: JSON.stringify(newStock)
         });
 
-        // take user back to main page
-        this._navigate();
+        let fullRes = await res.json();
+
+        // if we get back an error message, display it 
+        if(fullRes.message) {
+            this._displayError(fullRes.message);
+        }
+        else {
+            this._navigate();
+        }
     }
 
     _navigate() {
@@ -62,7 +74,11 @@ export default class AddStock extends HTMLElement {
         this.dispatchEvent(navigateEvent);
     }
 
-    _renderForm() {
+    _displayError(err) {
+        this.shadowRoot.querySelector('#formError').innerHTML = err;
+    }
+
+    _render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {
@@ -73,13 +89,27 @@ export default class AddStock extends HTMLElement {
                 font-weight: bold;
                 color: white;
             }
+
+            #formError {
+                color: red;
+                width: 200px;
+            }
+
+            div {
+                margin: 5px 0px;
+            }
         </style>
         <form action="#" id="addStockForm">
+            <div>
             <input type="text" name="stockName" placeholder="Symbol" id="newStockSymbol">
+            </div>
+            <div>
             <input type="text" name="stockShares" placeholder="Shares" id="newStockShares">
+            </div>
 
             <button type="submit">Add Stock</button>
         </form>
+        <p id="formError"></p>
         `;
     }
 }

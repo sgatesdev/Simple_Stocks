@@ -31,7 +31,7 @@
         this.email = data.email;
 
         // render form
-        this._renderForm();
+        this._render();
 
         // create vars for parts of shadowDOM after it is rendered
         this.errorContainer = this.shadowRoot.querySelector('#error');
@@ -105,7 +105,7 @@
         this.dispatchEvent(navigateEvent);
     }
 
-    _renderForm() {
+    _render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {
@@ -125,11 +125,9 @@
                 margin: 0px;
                 padding-top: 5px;
                 color: red;
-                width: 100%;
-                text-align: center;
+                width: 200px;
             }
         </style>
-        <p id="error"></p>
         <form action="#" id="profileForm">
             <div>
                 <div>Username</div>
@@ -151,6 +149,7 @@
             </div>
             <button type="submit">Save</button>
         </form>
+        <p id="error"></p>
         `;
     }
   }

@@ -17,7 +17,7 @@
         this.token = localStorage.getItem('simple-stocks-jwt');
 
         // render form
-        this._renderForm();
+        this._render();
 
         // create vars for parts of shadowDOM after it is rendered
         this.errorContainer = this.shadowRoot.querySelector('#error');
@@ -96,7 +96,7 @@
         this.dispatchEvent(navigateEvent);
     }
 
-    _renderForm() {
+    _render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {
@@ -116,11 +116,9 @@
                 margin: 0px;
                 padding-top: 5px;
                 color: red;
-                width: 100%;
-                text-align: center;
+                width: 200px;
             }
         </style>
-        <p id="error"></p>
         <form action="#" id="profileForm">
             <div>
                 <div>Current password</div>
@@ -140,8 +138,9 @@
                 <input type="password" name="confirm" placeholder="Confirm" id="confirm">
                 </div>
             </div>
-            <button type="submit">Change password</button>
+            <button type="submit">Update</button>
         </form>
+        <p id="error"></p>
         `;
     }
   }

@@ -44,7 +44,8 @@ export default class Home extends HTMLElement {
             this._stockData = [];
         }
         else {
-            this._stockData = [...data];
+            this._stockData = [...data.stocks];
+            this._portfolioValue = data.value;
         }
     }
 
@@ -55,6 +56,8 @@ export default class Home extends HTMLElement {
             `;
         }
 
+        let totalValue = 0;
+
         // iterate through stocks to generate cards for each stock, display on page 
         this._stockData.forEach(stock => {
             const newCard = document.createElement('stock-card');
@@ -62,10 +65,15 @@ export default class Home extends HTMLElement {
             newCard.setAttribute('symbol', stock.symbol);
             newCard.setAttribute('shares', stock.shares);
             newCard.setAttribute('price', stock.price);
+            newCard.setAttribute('value', stock.value);
             newCard.setAttribute('data-id', stock._id)
 
             this.homePageContent.append(newCard);
         });
+
+        let docHead = document.querySelector('stock-app').shadowRoot.querySelector('.pageHeader');
+
+        docHead.innerHTML = this._portfolioValue;
     }
 
     async _renderLogged() {

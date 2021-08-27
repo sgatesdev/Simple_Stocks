@@ -122,12 +122,8 @@ export default class StockApp extends HTMLElement {
             </stock-navbar>
         </div>
 
-        <div class="addStock">
-        <!-- Put form here -->
-        </div>
-
-        <div class="warning">
-        <!-- No stock warning goes here -->
+        <div class="pageHeader">
+        <!--Total value goes here-->
         </div>
 
         <div class="content">

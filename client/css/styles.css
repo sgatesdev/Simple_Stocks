@@ -44,8 +44,11 @@ label {
   font-size: 13pt;
 }
 
-.warning {
+.pageHeader {
   text-align: center;
+  font-size: 22pt;
+  margin: 10px 0px;
+  font-weight: bold;
 }
 
 input {

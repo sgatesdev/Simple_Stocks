@@ -4,40 +4,13 @@
 
 import { BACKEND_URL } from '../config.js';
 
-const template = document.createElement('template');
-
-template.innerHTML = `
-    <style>
-        button {
-            border-radius: 5px;
-            padding: 5px;
-            margin-left: 5px;
-            background-color: #513aff;
-            font-weight: bold;
-            color: white;
-        }
-
-        span {
-            color: red;
-        }
-    </style>
-    <form action="#" id="loginForm">
-        <input type="text" name="username" placeholder="Username" id="username">
-
-        <input type="password" name="password" placeholder="Password" id="password">
-        <button type="submit">Login</button>
-    </form>
-    <span id="formError"></span>
-`;
-
 export default class Login extends HTMLElement {
     constructor() {
         super();
 
-        // create shadow DOM
         this.attachShadow({ mode: 'open' });
-        
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+        this._render();
     }
 
     connectedCallback() {
@@ -104,6 +77,40 @@ export default class Login extends HTMLElement {
 
     _displayError(err) {
         this.shadowRoot.querySelector('#formError').innerHTML = err;
+    }
+
+    _render() {
+        this.shadowRoot.innerHTML = `
+        <style>
+            button {
+                border-radius: 5px;
+                padding: 5px;
+                margin-left: 5px;
+                background-color: #513aff;
+                font-weight: bold;
+                color: white;
+            }
+    
+            #formError {
+                color: red;
+                width: 200px;
+            }
+
+            div {
+                margin: 5px 0px;
+            }
+        </style>
+        <form action="#" id="loginForm">
+            <div>
+            <input type="text" name="username" placeholder="Username" id="username">
+            </div>
+            <div>
+            <input type="password" name="password" placeholder="Password" id="password">
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <p id="formError"></p>
+        `;
     }
 }
 
