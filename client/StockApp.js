@@ -8,6 +8,8 @@ import AddStock from './js/pages/AddStock.js';
 import Login from './js/pages/Login.js';
 import Signup from './js/pages/Signup.js';
 import Profile from './js/pages/Profile.js';
+import Username from './js/pages/profile/Username.js';
+import Password from './js/pages/profile/Password.js';
 
 // import navbar component
 import Navbar from './js/components/Navbar.js';
@@ -72,30 +74,40 @@ export default class StockApp extends HTMLElement {
     }
 
     _changeRoute(page) {
+        let ROOT_URL = '';
+
         switch(page) {
             case 'login':
                 this.appRoot.innerHTML = `<stock-pages-login></stock-pages-login>`;
-                history.pushState({page: 'login'}, '', '/login');
+                history.pushState({page: 'login'}, '', `${ROOT_URL}/login`);
                 break;               
             case 'signup':
                 this.appRoot.innerHTML = `<stock-pages-signup></stock-pages-signup>`;
-                history.pushState({page: 'signup'}, '', '/signup');
+                history.pushState({page: 'signup'}, '', `${ROOT_URL}/signup`);
                 break;
             case 'add':
                 this.appRoot.innerHTML = `<stock-pages-add></stock-pages-add>`;
-                history.pushState({page: 'add'}, '', '/add');
+                history.pushState({page: 'add'}, '', `${ROOT_URL}/add`);
                 break;
             case 'signup':
                 this.appRoot.innerHTML = `<stock-pages-signup></stock-pages-signup>`;
-                history.pushState({page: 'signup'}, '', '/signup');
+                history.pushState({page: 'signup'}, '', `${ROOT_URL}/signup`);
                 break;
             case 'profile':
                 this.appRoot.innerHTML = `<stock-pages-profile></stock-pages-profile>`;
-                history.pushState({page: 'profile'}, '', '/profile');
+                history.pushState({page: 'profile'}, '', `${ROOT_URL}/profile`);
+                break;
+            case 'profile-password':
+                this.appRoot.innerHTML = `<stock-pages-profile-password></stock-pages-profile-password>`;
+                history.pushState({page: 'profile-password'}, '', `${ROOT_URL}/profile/password`);
+                break;
+            case 'profile-username':
+                this.appRoot.innerHTML = `<stock-pages-profile-username></stock-pages-profile-username>`;
+                history.pushState({page: 'profile-username'}, '', `${ROOT_URL}/profile/username`);
                 break;
             default: 
                 this.appRoot.innerHTML = `<stock-pages-home></stock-pages-home>`;
-                history.pushState({page: 'home'}, '', '/');
+                history.pushState({page: 'home'}, '', `${ROOT_URL}/`);
                 break;
         }
     }

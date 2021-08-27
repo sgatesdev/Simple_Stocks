@@ -2,6 +2,8 @@
  * Page to handle adding a stock
  */
 
+import { BACKEND_URL } from "../config.js";
+
 export default class AddStock extends HTMLElement {
     constructor() {
         super();
@@ -39,7 +41,7 @@ export default class AddStock extends HTMLElement {
         };
 
         // save new stock selection
-        let res = await fetch('http://localhost:3001/stock/new/', {
+        let res = await fetch(`${BACKEND_URL}/stock/new/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${this.token}`,
@@ -47,7 +49,7 @@ export default class AddStock extends HTMLElement {
             },
             body: JSON.stringify(newStock)
         });
-        
+
         // take user back to main page
         this._navigate();
     }

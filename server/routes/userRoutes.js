@@ -31,7 +31,7 @@ router.post('/new', async (req, res) => {
     });
 });
 
-router.put('/edit', verifyToken, async (req, res) => {
+router.put('/edit/profile', verifyToken, async (req, res) => {
     // get user ID from token
     let token = req.headers.authorization.split(' ').pop().trim();
     let decoded = jwt.decode(token);
@@ -40,6 +40,26 @@ router.put('/edit', verifyToken, async (req, res) => {
 
     user.email = req.body.email;
     user.username = req.body.username;
+
+    let checkPass = await user.isCorrectPassword(req.body.current_password);
+
+    if(!checkPass) {
+        return res.json({ message: 'Incorrect password!' });
+    }
+
+    user.save((err, newUser) => {
+        if(err) return res.json(err);
+
+        return res.json(newUser);
+    });
+});
+
+router.put('/edit/password', verifyToken, async (req, res) => {
+    // get user ID from token
+    let token = req.headers.authorization.split(' ').pop().trim();
+    let decoded = jwt.decode(token);
+    
+    let user = await User.findOne({ '_id': decoded.data._id });
 
     let checkPass = await user.isCorrectPassword(req.body.current_password);
 
@@ -69,7 +89,6 @@ router.get('/me', verifyToken, async (req, res) => {
 
      return res.json(user);
 });
-
 
 router.get('/id/:id', verifyToken, async (req, res) => {
     let user = await User.findOne({ '_id': req.params.id });

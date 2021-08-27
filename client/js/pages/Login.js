@@ -2,6 +2,7 @@
  * Page to handle adding a stock
  */
 
+import { BACKEND_URL } from '../config.js';
 
 const template = document.createElement('template');
 
@@ -71,7 +72,7 @@ export default class Login extends HTMLElement {
 
     async loginUser() {
         // send credentials to API 
-        const res = await fetch(`http://localhost:3001/auth/login`, 
+        const res = await fetch(`${BACKEND_URL}/auth/login`, 
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

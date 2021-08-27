@@ -1,3 +1,5 @@
+import { BACKEND_URL } from "../config.js";
+
 export default class Navbar extends HTMLElement {
     constructor() {
         super();
@@ -17,7 +19,7 @@ export default class Navbar extends HTMLElement {
     connectedCallback() {
         this.token = localStorage.getItem('simple-stocks-jwt');
 
-        this.token ? this._renderLogged() : this._renderDefault();
+        this.token ? this._checkToken() : this._renderDefault();
     }
 
     // watch the logged attribute for changes
@@ -132,6 +134,30 @@ export default class Navbar extends HTMLElement {
         <div class="navbar">
         </div>    
         `;
+    }
+
+    async _checkToken() {
+        // see if token is valid 
+
+        // grab user info from server 
+        let res = await fetch(`${BACKEND_URL}/user/me/`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        let data = await res.json();
+
+        // if there's a message...it's not valid 
+        if(data.message) {
+            localStorage.removeItem('simple-stocks-jwt');
+            this._renderDefault();
+        }
+        else {
+            this._renderLogged();
+        }
     }
 }
 

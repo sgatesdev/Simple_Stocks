@@ -1,6 +1,8 @@
 /**
  * StockCard web component: renders stock info and calculates value of holding
  */
+import { BACKEND_URL } from "../config.js";
+
 const template = document.createElement('template');
 
 template.innerHTML = `
@@ -131,7 +133,7 @@ export default class StockCard extends HTMLElement {
         let stockId = this.getAttribute('data-id');
 
         // delete card from database
-        let res = await fetch(`http://localhost:3001/stock/delete/${stockId}`, {
+        let res = await fetch(`${BACKEND_URL}/stock/delete/${stockId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${this.token}`,

@@ -1,28 +1,33 @@
-/**
- * Page to handle sign up
+ /**
+ * Password change page
  */
+ 
+  import { BACKEND_URL } from '../../config.js';
 
- import { BACKEND_URL } from '../config.js';
-
- export default class Signup extends HTMLElement {
+  export default class ProfilePassword extends HTMLElement {
     constructor() {
         super();
 
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
-
-        this._renderForm();
-
-        this.errorContainer = this.shadowRoot.querySelector('#error');
     }
 
-    connectedCallback() {
-        const form = this.shadowRoot.querySelector('#signupForm');
+    async connectedCallback() {
+        // grab token from local storage to authenticate request 
+        this.token = localStorage.getItem('simple-stocks-jwt');
+
+        // render form
+        this._renderForm();
+
+        // create vars for parts of shadowDOM after it is rendered
+        this.errorContainer = this.shadowRoot.querySelector('#error');
+
+        const form = this.shadowRoot.querySelector('#profileForm');
         form.addEventListener('submit', (e) => this._onSubmit(e));
     }
 
     disconnectedCallback() {
-        const form = this.shadowRoot.querySelector('#signupForm');
+        const form = this.shadowRoot.querySelector('#profileForm');
         form.removeEventListener('submit', this._onSubmit);
     }
 
@@ -30,21 +35,17 @@
         e.preventDefault();
 
         //get inputs, including values, from DOM 
-        this.username = this.shadowRoot.getElementById('username').value;
-        this.email = this.shadowRoot.getElementById('email').value;
         this.password = this.shadowRoot.getElementById('password').value;
+        this.current_password = this.shadowRoot.getElementById('current_password').value;
 
         let confirm = this.shadowRoot.getElementById('confirm').value;
 
-        if(this.username === '') {
-            return this.errorContainer.innerHTML = 'Please enter a username';
-        }
-
-        if(this.email === '') {
-            return this.errorContainer.innerHTML = 'Please enter an email';
-        }
 
         if(this.password === '') {
+            return this.errorContainer.innerHTML = 'Please enter a password';
+        }
+
+        if(this.current_password === '') {
             return this.errorContainer.innerHTML = 'Please enter a password';
         }
 
@@ -57,44 +58,40 @@
         }
 
         // validation passed, create user
-        this._createUser();
+        this._editUser();
     }
 
-    async _createUser() {
+    async _editUser() {
         // put data into var to send 
-        let newUser = {
-            username: this.username,
-            email: this.email,
-            password: this.password
+        let updateUser = {
+            password: this.password,
+            current_password: this.current_password
         };
-
-        console.log(newUser)
         
-        // save new stock selection
-        let res = await fetch(`${BACKEND_URL}/user/new/`, {
-            method: 'POST',
+        // save updates to user
+        let res = await fetch(`${BACKEND_URL}/user/edit/password/`, {
+            method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${this.token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newUser)
+            body: JSON.stringify(updateUser)
         });
-        
-        if(res.ok) {
-            let token = await res.json();
 
-            localStorage.setItem('simple-stocks-jwt', token);
+        let fullResponse = await res.json();
 
-            this._navigate();  
+        if(fullResponse.message) {
+            this.errorContainer.innerHTML = fullResponse.message;
         } 
         else {
-            this.errorContainer.innerHTML = 'There was an error creating user';
+            this._navigate();  
         }
     }
 
     _navigate() {
         let navigateEvent = new CustomEvent("route-change", {
             bubbles: true,
-            detail: { route: 'home' }
+            detail: { route: 'profile' }
         });
         this.dispatchEvent(navigateEvent);
     }
@@ -111,7 +108,7 @@
                 color: white;
             }
 
-            #signupForm div {
+            #profileForm div {
                 margin: 5px 0px; 
             }
 
@@ -124,23 +121,29 @@
             }
         </style>
         <p id="error"></p>
-        <form action="#" id="signupForm">
+        <form action="#" id="profileForm">
             <div>
-                <input type="text" name="username" placeholder="Username" id="username">
+                <div>Current password</div>
+                <div>
+                <input type="password" name="current_password" placeholder="New Password" id="current_password">
+                </div>
             </div>
             <div>
-                <input type="text" name="email" placeholder="Email" id="email">
+                <div>New password</div>
+                <div>
+                <input type="password" name="password" placeholder="New Password" id="password">
+                </div>
             </div>
             <div>
-                <input type="password" name="password" placeholder="Password" id="password">
-            </div>
-            <div>
+                <div>Confirm</div>
+                <div>
                 <input type="password" name="confirm" placeholder="Confirm" id="confirm">
+                </div>
             </div>
-            <button type="submit">Sign Up!</button>
+            <button type="submit">Change password</button>
         </form>
         `;
     }
-}
-
-window.customElements.define('stock-pages-signup', Signup);
+  }
+  
+  window.customElements.define('stock-pages-profile-password', ProfilePassword);

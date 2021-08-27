@@ -3,6 +3,7 @@
  */
 
 import StockCard from '../components/StockCard.js';
+import { BACKEND_URL } from '../config.js';
 
 export default class Home extends HTMLElement {
     constructor() {
@@ -28,7 +29,7 @@ export default class Home extends HTMLElement {
 
     async _fetchStocks() {
         // get stocks from database
-        let res = await fetch('http://localhost:3001/stock/user/', {
+        let res = await fetch(`${BACKEND_URL}/stock/user/`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${this.token}`,
@@ -36,16 +37,23 @@ export default class Home extends HTMLElement {
             }
         });
 
-        this._stockData = await res.json();
+        let data = await res.json();
+
+        if(data.message) {
+            localStorage.removeItem('simple-stocks-jwt');
+            this._stockData = [];
+        }
+        else {
+            this._stockData = [...data];
+        }
     }
 
     _displayStocks() {
         if(this._stockData.length === 0) {
-            this.homePageContent.innerHTML = `
+            return this.homePageContent.innerHTML = `
             <h1>No stocks found! Please add a stock to your portfolio.</h1>
             `;
         }
-
 
         // iterate through stocks to generate cards for each stock, display on page 
         this._stockData.forEach(stock => {
