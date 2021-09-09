@@ -74,7 +74,8 @@ export default class StockApp extends HTMLElement {
     }
 
     _changeRoute(page) {
-        let ROOT_URL = '';
+        // no training slash
+        let ROOT_URL = '/projects/simple-stocks';
 
         switch(page) {
             case 'login':

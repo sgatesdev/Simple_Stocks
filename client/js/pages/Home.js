@@ -50,6 +50,9 @@ export default class Home extends HTMLElement {
     }
 
     _displayStocks() {
+        // reset content
+        this.homePageContent.innerHTML = ``;
+
         if(this._stockData.length === 0) {
             return this.homePageContent.innerHTML = `
             <h1>No stocks found! Please add a stock to your portfolio.</h1>
@@ -77,6 +80,11 @@ export default class Home extends HTMLElement {
     }
 
     async _renderLogged() {
+        // display loading message
+        this.homePageContent.innerHTML = `
+        <h1>Loading your stocks...</h1>
+        `;
+
         // get stocks
         await this._fetchStocks();
 
