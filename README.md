@@ -6,6 +6,8 @@
 
 ## Description
 
+Update 4-24-22: New version released! The UI reflects minor styling changes. There are significant code changes behind the scenes.
+
 Simple Stocks is an easy way to manage your stock portfolio! Unlike other apps, this app only provides you with basic information. You input only the stock symbol and the number of shares you own. The app takes care of the rest.
 
 After setting up your portfolio, you get a quick snapshot of the value of each holding and a total portfolio value. This app was created for the trader who has a conservative, long-term outlook - it is not for day traders!
