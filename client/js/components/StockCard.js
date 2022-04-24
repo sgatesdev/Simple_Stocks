@@ -77,7 +77,7 @@ export default class StockCard extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
-        <link rel="stylesheet" type="text/css" href="/css/stockCard.css">
+        <link rel="stylesheet" type="text/css" href="css/stockCard.css">
     
         <div class="card-container">
             <div class="stock-symbol">

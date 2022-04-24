@@ -73,7 +73,7 @@ export default class StockApp extends HTMLElement {
     initializeRouter() {
         // listen for the user to click browser buttons, use history to navigate them around
         window.addEventListener('popstate', (e) => {
-            this.changeRoute(e.state.page);
+            this.changePage(e.state.page);
         });
     }
 
