@@ -20,7 +20,7 @@ export default class StockApp extends HTMLElement {
 
         // create shadow dom, render shell for app 
         this.attachShadow({ mode: 'open' });
-        this._render();
+        this.render();
 
         // set root for content within app 
         this.appRoot = this.shadowRoot.querySelector('.content');
@@ -31,50 +31,54 @@ export default class StockApp extends HTMLElement {
 
     connectedCallback() {   
         // start listening for route changes on load
-        this._initializeRouter();
+        this.initializeRouter();
 
         // set default route
-        this._changeRoute('home');
+        this.changePage('home');
     }
 
-    _initializeRouter() {
-        console.log('Router initiated...')
+    static get observedAttributes() {
+        return ["page"];
+    }
 
-        // listen for button click, redirect user
-        this.shadowRoot.addEventListener('route-change', (e) => {
-            // if logged in, tell navbar to update menu by changing attribute
-            this.token = localStorage.getItem('simple-stocks-jwt');
+    // callback when changes are made to logged
+    attributeChangedCallback(name, oldValue, newValue) {
+        if(oldValue === newValue) return; 
+        if (name === 'page') {
+            this.pageUpdated(newValue);
+        }
+    }
 
-            if(this.token) {
-                this.loggedIn = true;
+    pageUpdated(page) {
+        // if logged in, tell navbar to update menu by changing attribute
+        this.token = localStorage.getItem('simple-stocks-jwt');
 
-                const navbar = this.shadowRoot.querySelector('stock-navbar');
-                navbar.setAttribute('logged', 'true');
-            }
+        // determine auth status (still evaluated with each request)
+        if(this.token) {
+            this.loggedIn = true;
+            const navbar = this.shadowRoot.querySelector('stock-navbar');
+            navbar.setAttribute('logged', 'true');
+        }
 
-            // log user out
-            if(e.detail.route === 'logout') {
-                localStorage.removeItem('simple-stocks-jwt');
+        // log user out
+        if(page === 'logout') {
+            localStorage.removeItem('simple-stocks-jwt');
+            const navbar = this.shadowRoot.querySelector('stock-navbar');
+            navbar.removeAttribute('logged');
+            page = 'home';
+        }
+        this.changePage(page);
+    }
 
-                const navbar = this.shadowRoot.querySelector('stock-navbar');
-                navbar.removeAttribute('logged');
-
-                this._changeRoute('home');
-            }
-
-            console.log(`Routing to ${e.detail.route}`)
-
-            this._changeRoute(e.detail.route);
-        });
-
+    initializeRouter() {
         // listen for the user to click browser buttons, use history to navigate them around
         window.addEventListener('popstate', (e) => {
-            this._changeRoute(e.state.page);
+            this.changeRoute(e.state.page);
         });
     }
 
-    _changeRoute(page) {
-        // no training slash
+    changePage(page) {
+        // no trailing slash
         let ROOT_URL = '/projects/simple-stocks';
 
         switch(page) {
@@ -113,9 +117,9 @@ export default class StockApp extends HTMLElement {
         }
     }
 
-    _render() {
+    render() {
         this.shadowRoot.innerHTML = `
-        <link rel="stylesheet" href="./css/styles.css">
+        <link rel="stylesheet" type="text/css" href="./css/styles.css">
         
         <div class="header">
             <h3>Simple Stocks</h3>
@@ -123,7 +127,7 @@ export default class StockApp extends HTMLElement {
             </stock-navbar>
         </div>
 
-        <div class="pageHeader">
+        <div class="pageHeader" title="Portfolio value">
         <!--Total value goes here-->
         </div>
 

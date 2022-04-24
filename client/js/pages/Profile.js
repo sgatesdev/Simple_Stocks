@@ -2,7 +2,7 @@
  * Page to handle adding a stock
  */
  
-  import { BACKEND_URL } from '../config.js';
+ import * as Utilities from '../utils.js';
 
   export default class Profile extends HTMLElement {
     constructor() {
@@ -10,18 +10,10 @@
 
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
-        this._render();
+        this.render();
     }
 
-    _navigate(page) {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: page }
-        });
-        this.dispatchEvent(navigateEvent);
-    }
-
-    _render() {
+    render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {
@@ -49,9 +41,9 @@
     }
 
     connectedCallback() {
-        this.shadowRoot.querySelector('#password').addEventListener('click', () => this._navigate('profile-password'));
-
-        this.shadowRoot.querySelector('#username').addEventListener('click', () => this._navigate('profile-username'));
+        this.shadowRoot.querySelector('#password').addEventListener('click', () => 
+        Utilities.changePage('profile-password'));
+        this.shadowRoot.querySelector('#username').addEventListener('click', () => Utilities.changePage('profile-username'));
     }
   }
   

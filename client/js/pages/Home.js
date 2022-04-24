@@ -3,7 +3,7 @@
  */
 
 import StockCard from '../components/StockCard.js';
-import { BACKEND_URL } from '../config.js';
+import * as Utilities from "../utils.js";
 
 export default class Home extends HTMLElement {
     constructor() {
@@ -11,90 +11,90 @@ export default class Home extends HTMLElement {
 
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.innerHTML = `
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
         <div style="display: flex; flex-wrap: wrap" id="homePageContent">
         </div>
         `;
         this.homePageContent = this.shadowRoot.querySelector('#homePageContent');
+        this.shadowRoot.addEventListener('home-refresh', () => this.connectedCallback());
     }
 
     connectedCallback() {
         this.token = localStorage.getItem('simple-stocks-jwt');
-
-        this.token ? this._renderLogged() : this._renderDefault();
+        this.token ? this.renderLogged() : this.renderDefault();
     }
 
-    _displayWarning() {
-        this.homePageContent.innerHTML = `<h3>No stocks found. Please add a stock to your collection!</h3>`;
+    displayWarning() {
+        this.homePageContent.innerHTML = `<h3>Add stocks to get started!</h3>`;
     }
 
-    async _fetchStocks() {
+    async fetchStocks() {
+        // buffer loading message
+        let loadingTimeout = setTimeout(() => {
+            this.homePageContent.innerHTML = `
+            <h3>Loading your stocks...</h3>
+            `;
+        }, 500);
+
         // get stocks from database
-        let res = await fetch(`${BACKEND_URL}/stock/user/`, {
+        let res = await fetch(`${Utilities.API_ROOT}/stock/user/`, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            }
+            headers: Utilities.getDefaultHeaders(this.token)
         });
 
         let data = await res.json();
 
+        // clear buffered loading message if it hasn't fired yet 
+        clearTimeout(loadingTimeout);
+
         if(data.message) {
             localStorage.removeItem('simple-stocks-jwt');
-            this._stockData = [];
+            this.stockData = [];
         }
         else {
-            this._stockData = [...data.stocks];
-            this._portfolioValue = data.value;
+            this.stockData = [...data.stocks];
+            this.portfolioValue = data.value;
         }
     }
 
-    _displayStocks() {
-        // reset content
-        this.homePageContent.innerHTML = ``;
+    setPortfolioValueDisplay(value = this.portfolioValue) {
+        let docHead = document.querySelector('stock-app').shadowRoot.querySelector('.pageHeader');
+        docHead.innerHTML = value;
+    }
 
-        if(this._stockData.length === 0) {
-            return this.homePageContent.innerHTML = `
-            <h1>No stocks found! Please add a stock to your portfolio.</h1>
-            `;
+    displayStocks() {
+        // reset page
+        this.homePageContent.innerHTML = ``;
+        this.setPortfolioValueDisplay('');
+
+        if(this.stockData.length === 0) {
+            return this.displayWarning();
         }
 
-        let totalValue = 0;
-
         // iterate through stocks to generate cards for each stock, display on page 
-        this._stockData.forEach(stock => {
+        this.stockData.forEach(stock => {
             const newCard = document.createElement('stock-card');
-
             newCard.setAttribute('symbol', stock.symbol);
             newCard.setAttribute('shares', stock.shares);
             newCard.setAttribute('price', stock.price);
             newCard.setAttribute('value', stock.value);
             newCard.setAttribute('data-id', stock._id)
-
             this.homePageContent.append(newCard);
         });
 
-        let docHead = document.querySelector('stock-app').shadowRoot.querySelector('.pageHeader');
-
-        docHead.innerHTML = this._portfolioValue;
+        this.setPortfolioValueDisplay();
     }
 
-    async _renderLogged() {
-        // display loading message
-        this.homePageContent.innerHTML = `
-        <h1>Loading your stocks...</h1>
-        `;
-
+    async renderLogged() {
         // get stocks
-        await this._fetchStocks();
-
+        await this.fetchStocks();
         // render cards
-        this._displayStocks();
+        this.displayStocks();
     }
 
-    _renderDefault() {
+    renderDefault() {
         this.homePageContent.innerHTML = `
-        <h1>Please log in to see your stocks</h1>
+        <h3>Please log in to see your stocks</h3>
         `;
     }
 }

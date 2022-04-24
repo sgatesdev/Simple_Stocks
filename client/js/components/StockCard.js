@@ -1,7 +1,7 @@
 /**
  * StockCard web component: renders stock info and calculates value of holding
  */
-import { BACKEND_URL } from "../config.js";
+ import * as Utilities from "../utils.js";
 
 export default class StockCard extends HTMLElement {
     constructor() {
@@ -15,7 +15,7 @@ export default class StockCard extends HTMLElement {
 
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
-        this._render();
+        this.render();
 
         // display data by default
         this.displayData = true;
@@ -39,26 +39,21 @@ export default class StockCard extends HTMLElement {
 
     // set up toggling display of content
     connectedCallback() {
-        //this.refreshPrice = setInterval(this.getPrice, 30000);
-
-        this.shadowRoot.querySelector('#toggleData').addEventListener('click', this.toggleDataDisplay.bind(this));
-        this.shadowRoot.querySelector('#deleteCard').addEventListener('click', this.deleteCard.bind(this));
-
+        this.shadowRoot.querySelector('#toggleData').addEventListener('click', () => this.toggleDataDisplay());
+        this.shadowRoot.querySelector('#deleteCard').addEventListener('click', () => this.deleteCard());
         this.token = localStorage.getItem('simple-stocks-jwt');
     }
 
     // toggle display
     toggleDataDisplay() {
         this.displayData = !this.displayData;
-
         let stockData = this.shadowRoot.querySelector('.stock-data');
+        stockData.style.display = this.displayData ? 'block' : 'none';
+    }
 
-        if (this.displayData) {
-            stockData.style.display = 'block';
-        }
-        else {
-            stockData.style.display = 'none';
-        }
+    refreshHome() {
+        let refreshEvent = new CustomEvent("home-refresh", { bubbles: true });
+        this.dispatchEvent(refreshEvent);
     }
 
     async deleteCard() {
@@ -66,29 +61,23 @@ export default class StockCard extends HTMLElement {
         let stockId = this.getAttribute('data-id');
 
         // delete card from database
-        let res = await fetch(`${BACKEND_URL}/stock/delete/${stockId}`, {
+        let res = await fetch(`${Utilities.API_ROOT}/stock/delete/${stockId}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            }
+            headers: Utilities.getDefaultHeaders(this.token)
         });
-
-        let test = await res.json();
-
-        this.card = this.shadowRoot.querySelector('.card-container');
-
-        this.card.remove();
+        // look at response, make sure stock was deleted
+        let data = await res.json();
+        if (data?.message === 'Stock deleted!') {
+            this.refreshHome();
+        }
+        else {
+            alert('Could not delete stock! Please try again.');
+        }
     }
 
-    _displayWarning() {
-        this.card.setAttribute('style','width: 100%');
-        this.card.innerHTML = `<h3>No stocks found. Please add a stock to your collection!</h3>`;
-    }
-
-    _render() {
+    render() {
         this.shadowRoot.innerHTML = `
-        <link rel="stylesheet" href="./css/stockCard.css">
+        <link rel="stylesheet" type="text/css" href="/css/stockCard.css">
     
         <div class="card-container">
             <div class="stock-symbol">

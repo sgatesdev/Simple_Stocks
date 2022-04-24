@@ -2,7 +2,7 @@
  * Page to handle sign up
  */
 
- import { BACKEND_URL } from '../config.js';
+ import * as Utilities from "../utils.js";
 
  export default class Signup extends HTMLElement {
     constructor() {
@@ -11,22 +11,22 @@
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
 
-        this._renderForm();
+        this.renderForm();
 
         this.errorContainer = this.shadowRoot.querySelector('#error');
     }
 
     connectedCallback() {
         const form = this.shadowRoot.querySelector('#signupForm');
-        form.addEventListener('submit', (e) => this._onSubmit(e));
+        form.addEventListener('submit', (e) => this.onSubmit(e));
     }
 
     disconnectedCallback() {
         const form = this.shadowRoot.querySelector('#signupForm');
-        form.removeEventListener('submit', this._onSubmit);
+        form.removeEventListener('submit', this.onSubmit);
     }
 
-    _onSubmit(e) {
+    onSubmit(e) {
         e.preventDefault();
 
         //get inputs, including values, from DOM 
@@ -57,10 +57,10 @@
         }
 
         // validation passed, create user
-        this._createUser();
+        this.createUser();
     }
 
-    async _createUser() {
+    async createUser() {
         // put data into var to send 
         let newUser = {
             username: this.username,
@@ -71,35 +71,23 @@
         console.log(newUser)
         
         // save new stock selection
-        let res = await fetch(`${BACKEND_URL}/user/new/`, {
+        let res = await fetch(`${Utilities.API_ROOT}/user/new/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: Utilities.getDefaultHeaders(),
             body: JSON.stringify(newUser)
         });
         
         if(res.ok) {
             let token = await res.json();
-
             localStorage.setItem('simple-stocks-jwt', token);
-
-            this._navigate();  
+            Utilities.changePage('home');
         } 
         else {
             this.errorContainer.innerHTML = 'There was an error creating user';
         }
     }
 
-    _navigate() {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: 'home' }
-        });
-        this.dispatchEvent(navigateEvent);
-    }
-
-    _renderForm() {
+    renderForm() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {

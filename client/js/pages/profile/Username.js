@@ -2,7 +2,7 @@
  * Username/Email update page
  */
  
-  import { BACKEND_URL } from '../../config.js';
+  import * as Utilities from "../../utils.js";
 
   export default class ProfileUsername extends HTMLElement {
     constructor() {
@@ -16,38 +16,40 @@
         // grab token from local storage to authenticate request 
         this.token = localStorage.getItem('simple-stocks-jwt');
 
+        if (!this.token) {
+            return;
+        }
+
         // grab user info from server 
-        let res = await fetch(`${BACKEND_URL}/user/me/`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        let userInfo = await Utilities.getMe(this.token);
+        if (userInfo.message) {
+            // user somehow got here without being logged in
+            return Utilities.changePage('home');   
+        }
 
-        let data = await res.json();
-
-        this.username = data.username;
-        this.email = data.email;
+        this.username = userInfo.username;
+        this.email = userInfo.email;
 
         // render form
-        this._render();
+        this.render();
 
         // create vars for parts of shadowDOM after it is rendered
         this.errorContainer = this.shadowRoot.querySelector('#error');
 
-        const form = this.shadowRoot.querySelector('#profileForm');
-        form.addEventListener('submit', (e) => this._onSubmit(e));
+        const saveBtn = this.shadowRoot.querySelector('#btn-save');
+        saveBtn.addEventListener('click', (e) => this.onSubmit(e));
+
+        const cancelBtn = this.shadowRoot.querySelector('#btn-cancel');
+        cancelBtn.addEventListener('click', () => Utilities.changePage('profile'));
     }
 
     disconnectedCallback() {
         const form = this.shadowRoot.querySelector('#profileForm');
-        form.removeEventListener('submit', this._onSubmit);
+        form.removeEventListener('submit', this.onSubmit);
     }
 
-    _onSubmit(e) {
+    onSubmit(e) {
         e.preventDefault();
-
         //get inputs, including values, from DOM 
         this.username = this.shadowRoot.getElementById('username').value;
         this.email = this.shadowRoot.getElementById('email').value;
@@ -66,10 +68,10 @@
         }
 
         // validation passed, create user
-        this._editUser();
+        this.editUser();
     }
 
-    async _editUser() {
+    async editUser() {
         // put data into var to send 
         let updateUser = {
             username: this.username,
@@ -78,34 +80,22 @@
         };
         
         // save updates to user
-        let res = await fetch(`${BACKEND_URL}/user/edit/profile/`, {
+        let res = await fetch(`${Utilities.API_ROOT}/user/edit/profile/`, {
             method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: Utilities.getDefaultHeaders(this.token),
             body: JSON.stringify(updateUser)
         });
-        
-        let fullResponse = await res.json();
+        let data = await res.json();
 
-        if(fullResponse.message) {
-            this.errorContainer.innerHTML = fullResponse.message;
+        if(data.message) {
+            this.errorContainer.innerHTML = data.message;
         } 
         else {
-            this._navigate();  
+            Utilities.changePage('profile');
         }
     }
 
-    _navigate() {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: 'profile' }
-        });
-        this.dispatchEvent(navigateEvent);
-    }
-
-    _render() {
+    render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {
@@ -147,7 +137,8 @@
                 <input type="password" name="password" placeholder="Password" id="password">
                 </div>
             </div>
-            <button type="submit">Save</button>
+            <button id="btn-save" type="submit">Save</button>
+            <button id="btn-cancel" type="submit">Cancel</button>
         </form>
         <p id="error"></p>
         `;

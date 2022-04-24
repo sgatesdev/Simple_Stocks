@@ -1,4 +1,4 @@
-import { BACKEND_URL } from "../config.js";
+import * as Utilities from "../utils.js";
 
 export default class Navbar extends HTMLElement {
     constructor() {
@@ -6,103 +6,70 @@ export default class Navbar extends HTMLElement {
 
         // create shadowDOM and render component shell
         this.attachShadow({ mode: 'open' });
-        this._renderRoot();
+        this.render();
 
         // set default for loggedIn (this toggles the menus)
         this.loggedIn = false;
 
-        // set root for navbar to drop into
-        this.navList = this.shadowRoot.querySelector('.navbar');
+        // default menu options 
+        this.defaultMenuOptions = [
+            { id: 'nav-home', text: 'Home', page: 'home' },
+            { id: 'nav-login', text: 'Login', page: 'login' },
+            { id: 'nav-signup', text: 'Sign Up', page: 'signup' }
+        ];
+
+        // authenticated options
+        this.authMenuOptions = [
+            { id: 'nav-home', text: 'Home', page: 'home' },
+            { id: 'nav-add', text: 'Add Stock',page: 'add' },
+            { id: 'nav-profile', text: 'Profile', page: 'profile' },
+            { id: 'nav-logout', text: 'Log Out', page: 'logout' }
+        ];
     }
 
     // when component loads, render default menu 
     connectedCallback() {
         this.token = localStorage.getItem('simple-stocks-jwt');
-
-        this.token ? this._checkToken() : this._renderDefault();
+        this.checkToken();
     }
 
     // watch the logged attribute for changes
     // i learned that this is case sensitive, and components do not like camel casing
     // at least not in chrome
     static get observedAttributes() {
-        return ["logged"];
+        return ["logged", "page"];
     }
 
     // callback when changes are made to logged
     attributeChangedCallback(name, oldValue, newValue) {
         if(oldValue === newValue) return; 
-
-        this.loggedIn = newValue;
-
-        this.loggedIn ? this._renderLogged() : this._renderDefault();
+        if (name === 'logged') {
+            this.loggedIn = newValue;
+            this.setNavOptions();
+        }
     }
 
 
-    // dispatch event to StockApp to switch pages
-    _navigate(page) {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: page }
+    // generate navigation menu links
+    setNavOptions() {
+        let options = !this.loggedIn ? this.defaultMenuOptions : this.authMenuOptions;
+        let ulElement = document.createElement('ul');
+
+        options.forEach(option => {
+            let liElement = document.createElement('li');
+            liElement.innerHTML = `<span id="${option.id}">${option.text}</span>`;
+            liElement.addEventListener('click', () => Utilities.changePage(option.page));
+            ulElement.append(liElement);
         });
-        this.dispatchEvent(navigateEvent);
-    }
 
-    // displays default menu
-    _renderDefault() {
-        this.navList.innerHTML = `
-        <ul>
-        <li>
-            <span id="nav-home">Home</span> |
-        </li>
-        <li>
-            <span id="nav-login">Login</span> |
-        </li>
-        <li>
-        <span id="nav-signup">Sign Up</span>
-        </li>
-        </ul>
-        `;
-
-        // add event listeners for menu items
-        this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
-
-        this.shadowRoot.querySelector('#nav-login').addEventListener('click', () => this._navigate('login'));
-
-        this.shadowRoot.querySelector('#nav-signup').addEventListener('click', () => this._navigate('signup'));
-    }
-
-    // displays logged in menu w/ event listeners for navigation
-    _renderLogged() {
-        this.navList.innerHTML = `
-        <ul>
-        <li>
-            <span id="nav-home">Home</span> |
-        </li>
-        <li>
-            <span id="nav-add">Add Stock</span> |
-        </li>
-        <li>
-            <span id="nav-profile">Profile</span> |
-        </li>
-        <li>
-            <span id="nav-logout">Log out</span>
-        </li>
-        </ul>
-        `;
-
-        // add event listeners for menu items
-        this.shadowRoot.querySelector('#nav-home').addEventListener('click', () => this._navigate('home'));
-
-        this.shadowRoot.querySelector('#nav-add').addEventListener('click', () => this._navigate('add'));
-
-        this.shadowRoot.querySelector('#nav-profile').addEventListener('click', () => this._navigate('profile'));
-
-        this.shadowRoot.querySelector('#nav-logout').addEventListener('click', () => this._navigate('logout'));        
+        // set root for navbar to drop into
+        let navContainer = this.shadowRoot.querySelector('.navbar');
+        navContainer.innerHTML = '';
+        navContainer.append(ulElement);
     }
 
     // render container for component w/ styling
-    _renderRoot() {
+    render() {
         this.shadowRoot.innerHTML = `
         <style>
             .navbar {
@@ -129,35 +96,38 @@ export default class Navbar extends HTMLElement {
             span[id*=nav]:hover {
                 color: black;
             }
+
+            @media only screen and (max-width: 573px) {
+                ul {
+                    display: block;
+                }
+            }
         </style>
 
         <div class="navbar">
         </div>    
         `;
+        
+
     }
 
-    async _checkToken() {
-        // see if token is valid 
+    async checkToken() {
+        if (!this.token) {
+            return;
+        }
 
         // grab user info from server 
-        let res = await fetch(`${BACKEND_URL}/user/me/`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        let data = await res.json();
+        let userInfo = await Utilities.getMe(this.token);
 
         // if there's a message...it's not valid 
-        if(data.message) {
+        if(userInfo.message) {
             localStorage.removeItem('simple-stocks-jwt');
-            this._renderDefault();
+            this.loggedIn = false;
         }
         else {
-            this._renderLogged();
+            this.loggedIn = true;
         }
+        this.setNavOptions();
     }
 }
 

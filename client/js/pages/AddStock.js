@@ -2,7 +2,7 @@
  * Page to handle adding a stock
  */
 
-import { BACKEND_URL } from "../config.js";
+ import * as Utilities from "../utils.js";
 
 export default class AddStock extends HTMLElement {
     constructor() {
@@ -10,8 +10,7 @@ export default class AddStock extends HTMLElement {
 
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
-
-        this._render();
+        this.render();
     }
 
     connectedCallback() {
@@ -36,7 +35,7 @@ export default class AddStock extends HTMLElement {
 
         // basic error checking
         if(symbol === '' || shares === '' || isNaN(shares)) {
-            return this._displayError('Please enter all required information.');
+            return this.displayError('Please enter all required information.');
         }
 
         // put data into var to send 
@@ -46,12 +45,9 @@ export default class AddStock extends HTMLElement {
         };
 
         // save new stock selection
-        let res = await fetch(`${BACKEND_URL}/stock/new/`, {
+        let res = await fetch(`${Utilities.API_ROOT}/stock/new/`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: Utilities.getDefaultHeaders(this.token),
             body: JSON.stringify(newStock)
         });
 
@@ -59,26 +55,18 @@ export default class AddStock extends HTMLElement {
 
         // if we get back an error message, display it 
         if(fullRes.message) {
-            this._displayError(fullRes.message);
+            this.displayError(fullRes.message);
         }
         else {
-            this._navigate();
+            Utilities.changePage('home');
         }
     }
 
-    _navigate() {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: 'home' }
-        });
-        this.dispatchEvent(navigateEvent);
-    }
-
-    _displayError(err) {
+    displayError(err) {
         this.shadowRoot.querySelector('#formError').innerHTML = err;
     }
 
-    _render() {
+    render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {

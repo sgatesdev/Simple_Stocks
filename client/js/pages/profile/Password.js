@@ -1,8 +1,8 @@
  /**
  * Password change page
  */
- 
-  import { BACKEND_URL } from '../../config.js';
+
+  import * as Utilities from "../../utils.js";
 
   export default class ProfilePassword extends HTMLElement {
     constructor() {
@@ -17,21 +17,24 @@
         this.token = localStorage.getItem('simple-stocks-jwt');
 
         // render form
-        this._render();
+        this.render();
 
         // create vars for parts of shadowDOM after it is rendered
         this.errorContainer = this.shadowRoot.querySelector('#error');
 
-        const form = this.shadowRoot.querySelector('#profileForm');
-        form.addEventListener('submit', (e) => this._onSubmit(e));
+        const updateBtn = this.shadowRoot.querySelector('#btn-update');
+        updateBtn.addEventListener('click', (e) => this.onSubmit(e));
+
+        const cancelBtn = this.shadowRoot.querySelector('#btn-cancel');
+        cancelBtn.addEventListener('click', (e) => Utilities.changePage('profile'));
     }
 
     disconnectedCallback() {
         const form = this.shadowRoot.querySelector('#profileForm');
-        form.removeEventListener('submit', this._onSubmit);
+        form.removeEventListener('submit', this.onSubmit);
     }
 
-    _onSubmit(e) {
+    onSubmit(e) {
         e.preventDefault();
 
         //get inputs, including values, from DOM 
@@ -58,10 +61,10 @@
         }
 
         // validation passed, create user
-        this._editUser();
+        this.editUser();
     }
 
-    async _editUser() {
+    async editUser() {
         // put data into var to send 
         let updateUser = {
             password: this.password,
@@ -69,12 +72,9 @@
         };
         
         // save updates to user
-        let res = await fetch(`${BACKEND_URL}/user/edit/password/`, {
+        let res = await fetch(`${Utilities.API_ROOT}/user/edit/password/`, {
             method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: Utilities.getDefaultHeaders(this.token),
             body: JSON.stringify(updateUser)
         });
 
@@ -84,19 +84,11 @@
             this.errorContainer.innerHTML = fullResponse.message;
         } 
         else {
-            this._navigate();  
+            Utilities.changePage('profile');
         }
     }
 
-    _navigate() {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: 'profile' }
-        });
-        this.dispatchEvent(navigateEvent);
-    }
-
-    _render() {
+    render() {
         this.shadowRoot.innerHTML =  `
         <style>
             button {
@@ -138,7 +130,8 @@
                 <input type="password" name="confirm" placeholder="Confirm" id="confirm">
                 </div>
             </div>
-            <button type="submit">Update</button>
+            <button type="submit" id="btn-update">Update</button>
+            <button type="cancel" id="btn-cancel">Cancel</button>
         </form>
         <p id="error"></p>
         `;

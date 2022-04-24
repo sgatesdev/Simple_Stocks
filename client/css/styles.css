@@ -7,8 +7,11 @@ body {
 }
 
 .header {
-  text-align: center;
   padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   background: #2d4a1a;
   background: linear-gradient(
     90deg,
@@ -45,9 +48,9 @@ label {
 }
 
 .pageHeader {
+  margin: 5px 0px;
   text-align: center;
   font-size: 22pt;
-  margin: 10px 0px;
   font-weight: bold;
 }
 
@@ -57,10 +60,17 @@ input {
 }
 
 /* Adjusting form for small screens */
-@media only screen and (max-device-width: 480px) {
+@media only screen and (max-width: 573px) {
   .addStock {
     display: flex;
     justify-content: center;
+  }
+
+  .header {
+    display: inline-flex;
+    width: 100%;
+    margin: 0px;
+    border-radius: 0px;
   }
 
   #newStockSymbol {
@@ -76,7 +86,7 @@ input {
     margin-bottom: 10px;
   }
 
-  .header h3 {
-    font-size: 12pt;
+  #homePageContent {
+    display: inline !important;
   }
 }

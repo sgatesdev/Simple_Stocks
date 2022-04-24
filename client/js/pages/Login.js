@@ -2,15 +2,14 @@
  * Page to handle adding a stock
  */
 
-import { BACKEND_URL } from '../config.js';
+  import * as Utilities from "../utils.js";
 
 export default class Login extends HTMLElement {
     constructor() {
         super();
 
         this.attachShadow({ mode: 'open' });
-
-        this._render();
+        this.render();
     }
 
     connectedCallback() {
@@ -32,11 +31,11 @@ export default class Login extends HTMLElement {
 
         // basic error handling
         if(this.username.length === 0) {
-            return this._displayError('Please enter a username!');
+            return this.displayError('Please enter a username!');
         }
 
         if(this.password.length === 0) {
-            return this._displayError('Please enter a password!');
+            return this.displayError('Please enter a password!');
         }
 
         // if it passes, log the user in
@@ -45,10 +44,10 @@ export default class Login extends HTMLElement {
 
     async loginUser() {
         // send credentials to API 
-        const res = await fetch(`${BACKEND_URL}/auth/login`, 
+        const res = await fetch(`${Utilities.API_ROOT}/auth/login`, 
             {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: Utilities.getDefaultHeaders(),
                 body: JSON.stringify({ username: this.username, password: this.password })
             }
         );
@@ -57,29 +56,21 @@ export default class Login extends HTMLElement {
         const formatRes = await res.json();
 
         if(formatRes.error) {
-            return this._displayError(formatRes.error);
+            return this.displayError(formatRes.error);
         }
 
         // set the token in place
         localStorage.setItem('simple-stocks-jwt', formatRes.token);
 
         // take user back to main page
-        this._navigate();
+        Utilities.changePage('home', true);
     }
 
-    _navigate() {
-        let navigateEvent = new CustomEvent("route-change", {
-            bubbles: true,
-            detail: { route: 'home', loggedIn: true }
-        });
-        this.dispatchEvent(navigateEvent);
-    }
-
-    _displayError(err) {
+    displayError(err) {
         this.shadowRoot.querySelector('#formError').innerHTML = err;
     }
 
-    _render() {
+    render() {
         this.shadowRoot.innerHTML = `
         <style>
             button {
