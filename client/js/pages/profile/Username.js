@@ -43,11 +43,6 @@
         cancelBtn.addEventListener('click', () => Utilities.changePage('profile'));
     }
 
-    disconnectedCallback() {
-        const form = this.shadowRoot.querySelector('#profileForm');
-        form.removeEventListener('submit', this.onSubmit);
-    }
-
     onSubmit(e) {
         e.preventDefault();
         //get inputs, including values, from DOM 

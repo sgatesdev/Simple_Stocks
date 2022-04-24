@@ -29,11 +29,6 @@
         cancelBtn.addEventListener('click', (e) => Utilities.changePage('profile'));
     }
 
-    disconnectedCallback() {
-        const form = this.shadowRoot.querySelector('#profileForm');
-        form.removeEventListener('submit', this.onSubmit);
-    }
-
     onSubmit(e) {
         e.preventDefault();
 
