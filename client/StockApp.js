@@ -34,7 +34,7 @@ export default class StockApp extends HTMLElement {
         this.initializeRouter();
 
         // set default route
-        this.changePage('home');
+        this.setAttribute('page', 'home');
     }
 
     static get observedAttributes() {

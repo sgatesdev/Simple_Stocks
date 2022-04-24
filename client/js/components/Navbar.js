@@ -28,9 +28,15 @@ export default class Navbar extends HTMLElement {
     }
 
     // when component loads, render default menu 
-    connectedCallback() {
+    async connectedCallback() {
         this.token = localStorage.getItem('simple-stocks-jwt');
-        this.checkToken();
+        if (!this.token) {
+            this.loggedIn = false;
+            this.setNavOptions();
+        }
+        else {
+            await this.checkToken();
+        }
     }
 
     // watch the logged attribute for changes
@@ -112,10 +118,6 @@ export default class Navbar extends HTMLElement {
     }
 
     async checkToken() {
-        if (!this.token) {
-            return;
-        }
-
         // grab user info from server 
         let userInfo = await Utilities.getMe(this.token);
 
