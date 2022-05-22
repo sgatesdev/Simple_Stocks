@@ -1,17 +1,12 @@
 /**
  * StockCard web component: renders stock info and calculates value of holding
  */
- import * as Utilities from "../utils.js";
+
+import * as Utilities from "../utils.js";
 
 export default class StockCard extends HTMLElement {
     constructor() {
         super();
-
-        // set variables 
-        this.shares = this.getAttribute('shares');
-        this.symbol = this.getAttribute('symbol');
-        this.price = this.getAttribute('price');
-        this.value = this.getAttribute('value');
 
         // create shadow DOM
         this.attachShadow({ mode: 'open' });
